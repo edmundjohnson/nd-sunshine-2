@@ -13,7 +13,7 @@
 
         <provider
             android:authorities="com.example.android.sunshine.app"
-            android:name=".data.WeatherProvider" />
+            android:name="com.example.android.sunshine.app.data.WeatherProvider" />
 
         <activity
             android:name=".MainActivity"

@@ -118,12 +118,15 @@ public class DetailActivity extends AppCompatActivity {
         private static  final int FORECAST_LOADER_ID = 2;
 
         private String mForecastUri;
+        private String mForecastStr = "";
+
+        private ShareActionProvider mShareActionProvider;
+
+        private TextView detailTextView;
 
         public DetailFragment() {
             setHasOptionsMenu(true);
         }
-
-        TextView detailTextView;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -151,7 +154,7 @@ public class DetailActivity extends AppCompatActivity {
             MenuItem menuItem = menu.findItem(R.id.action_share);
 
             // Get the provider and hold onto it to set/change the share intent.
-            ShareActionProvider mShareActionProvider =
+            mShareActionProvider =
                     (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
 
             // Attach an intent to this ShareActionProvider.  You can update this at any time,
@@ -159,7 +162,7 @@ public class DetailActivity extends AppCompatActivity {
             if (mShareActionProvider != null ) {
                 mShareActionProvider.setShareIntent(createShareForecastIntent());
             } else {
-                Log.d(LOG_TAG, "Share Action Provider is null?");
+                Log.d(LOG_TAG, "Share Action Provider is null");
             }
         }
 
@@ -168,7 +171,7 @@ public class DetailActivity extends AppCompatActivity {
             shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
             shareIntent.setType("text/plain");
             shareIntent.putExtra(Intent.EXTRA_TEXT,
-                    mForecastUri + FORECAST_SHARE_HASHTAG);
+                    mForecastStr + FORECAST_SHARE_HASHTAG);
             return shareIntent;
         }
 
@@ -236,8 +239,13 @@ public class DetailActivity extends AppCompatActivity {
          */
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-            //TODO update the UI here
-            detailTextView.setText(convertCursorRowToUXFormat(cursor));
+            if (cursor.moveToFirst()) {
+                mForecastStr = convertCursorRowToUXFormat(cursor);
+                detailTextView.setText(mForecastStr);
+            }
+            if (mShareActionProvider != null ) {
+                mShareActionProvider.setShareIntent(createShareForecastIntent());
+            }
         }
 
         /**

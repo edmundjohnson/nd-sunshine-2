@@ -163,11 +163,11 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
         weatherTask.execute(location);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        updateWeather();
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        updateWeather();
+//    }
 
     @Override
     public void onActivityCreated(Bundle bundle) {
@@ -253,4 +253,8 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
         mForecastAdapter.swapCursor(null);
     }
 
+    public void onLocationChanged(Bundle bundle) {
+        updateWeather();
+        getLoaderManager().restartLoader(FORECAST_LOADER_ID, bundle, this);
+    }
 }

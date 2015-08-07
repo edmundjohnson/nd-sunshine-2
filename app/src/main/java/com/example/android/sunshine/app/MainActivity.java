@@ -25,16 +25,33 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String FORECASTFRAGMENT_TAG = "FORECAST_FRAGMENT_TAG";
+
+    private String mLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mLocation = Utility.getPreferredLocation(this);
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment())
+                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
                     .commit();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mLocation != null && !mLocation.equals(Utility.getPreferredLocation(this))) {
+            ForecastFragment ff = (ForecastFragment)getSupportFragmentManager().
+                                        findFragmentByTag(FORECASTFRAGMENT_TAG);
+            ff.onLocationChanged(null);
+            mLocation = Utility.getPreferredLocation(this);
         }
     }
 

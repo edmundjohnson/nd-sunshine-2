@@ -93,8 +93,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
      * Fortunately parsing is easy:  constructor takes the JSON string and converts it
      * into an Object hierarchy for us.
      */
-    private void getWeatherDataFromJson(String forecastJsonStr,
-                                            String locationSetting)
+    private void getWeatherDataFromJson(String forecastJsonStr, String locationSetting)
             throws JSONException {
 
         // Now we have a String representing the complete forecast in JSON Format.

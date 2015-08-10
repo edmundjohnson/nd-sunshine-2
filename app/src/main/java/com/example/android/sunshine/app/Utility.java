@@ -48,17 +48,50 @@ public class Utility {
         return prefs.getString(context.getString(R.string.pref_units_key), context.getString(R.string.pref_units_metric)).equals(context.getString(R.string.pref_units_metric));
     }
 
-    static String formatTemperature(double temperature, boolean isMetric) {
-        double temp;
-        if ( !isMetric ) {
-            temp = 9 * temperature / 5 + 32;
+    public static String formatTemperature(Context context, double celsiusTemperature, boolean isMetric) {
+        double temperature;
+        if (isMetric) {
+            temperature = celsiusTemperature;
         } else {
-            temp = temperature;
+            temperature = 9 * celsiusTemperature / 5 + 32;
         }
-        return String.format("%.0f", temp);
+        return context.getString(R.string.format_temperature, temperature);
     }
 
-    static String formatDate(long dateInMillis) {
+    public static String getFormattedWind(Context context, float windSpeed, float degrees, boolean isMetric) {
+        int windFormat;
+        if (isMetric) {
+            windFormat = R.string.format_wind_kmh;
+        } else {
+            windFormat = R.string.format_wind_mph;
+            windSpeed = .621371192237334f * windSpeed;
+        }
+
+        // From wind direction in degrees, determine compass direction as a string (e.g NW)
+        // You know what's fun, writing really long if/else statements with tons of possible
+        // conditions.  Seriously, try it!
+        String direction = "Unknown";
+        if (degrees >= 337.5 || degrees < 22.5) {
+            direction = "N";
+        } else if (degrees >= 22.5 && degrees < 67.5) {
+            direction = "NE";
+        } else if (degrees >= 67.5 && degrees < 112.5) {
+            direction = "E";
+        } else if (degrees >= 112.5 && degrees < 157.5) {
+            direction = "SE";
+        } else if (degrees >= 157.5 && degrees < 202.5) {
+            direction = "S";
+        } else if (degrees >= 202.5 && degrees < 247.5) {
+            direction = "SW";
+        } else if (degrees >= 247.5 && degrees < 292.5) {
+            direction = "W";
+        } else if (degrees >= 292.5 || degrees < 22.5) {
+            direction = "NW";
+        }
+        return String.format(context.getString(windFormat), windSpeed, direction);
+    }
+
+    public static String formatDate(long dateInMillis) {
         Date date = new Date(dateInMillis);
         return DateFormat.getDateInstance().format(date);
     }

@@ -17,11 +17,9 @@ package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -158,7 +156,7 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
 
     private void updateWeather() {
         FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String location = Utility.getPreferredLocation(getActivity());
         weatherTask.execute(location);
     }

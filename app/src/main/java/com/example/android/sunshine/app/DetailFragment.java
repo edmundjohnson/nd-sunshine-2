@@ -30,7 +30,7 @@ import com.example.android.sunshine.app.data.WeatherContract;
  */
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String[] FORECAST_COLUMNS = {
+    private static final String[] DETAIL_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
             // the content provider joins the location & weather tables in the background
             // (both have an _id column)
@@ -42,14 +42,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
             WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
             WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
-            WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING,
-            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
-            WeatherContract.LocationEntry.COLUMN_COORD_LAT,
-            WeatherContract.LocationEntry.COLUMN_COORD_LONG,
             WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
             WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
             WeatherContract.WeatherEntry.COLUMN_DEGREES,
-            WeatherContract.WeatherEntry.COLUMN_PRESSURE
+            WeatherContract.WeatherEntry.COLUMN_PRESSURE,
+            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID
     };
 
     // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
@@ -59,14 +56,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     static final int COL_WEATHER_DESC = 2;
     static final int COL_WEATHER_MAX_TEMP = 3;
     static final int COL_WEATHER_MIN_TEMP = 4;
-    static final int COL_LOCATION_SETTING = 5;
-    static final int COL_WEATHER_CONDITION_ID = 6;
-    static final int COL_COORD_LAT = 7;
-    static final int COL_COORD_LONG = 8;
-    static final int COL_HUMIDITY = 9;
-    static final int COL_WIND_SPEED = 10;
-    static final int COL_DEGREES = 11;
-    static final int COL_PRESSURE = 12;
+    static final int COL_HUMIDITY = 5;
+    static final int COL_WIND_SPEED = 6;
+    static final int COL_DEGREES = 7;
+    static final int COL_PRESSURE = 8;
+    static final int COL_WEATHER_CONDITION_ID = 9;
 
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
 
@@ -163,7 +157,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(getActivity(),
                 Uri.parse(mForecastUri),
-                FORECAST_COLUMNS,
+                DETAIL_COLUMNS,
                 null,
                 null,
                 null);
@@ -211,7 +205,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if (cursor.moveToFirst()) {
-            // Create string for sharing
+            // Create a string for the sharing intent
             mForecastStr = convertCursorRowToUXFormat(cursor);
 
             // Write data from the cursor to the screen views
@@ -225,6 +219,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             double lowTemperature = cursor.getDouble(COL_WEATHER_MIN_TEMP);
             lowTextView.setText(Utility.formatTemperature(context, lowTemperature, isMetric));
 
+            // weather icon
+            int weatherId = cursor.getInt(COL_WEATHER_ID);
             iconImageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_launcher));
             forecastTextView.setText(cursor.getString(COL_WEATHER_DESC));
 

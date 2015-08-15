@@ -220,8 +220,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             lowTextView.setText(Utility.formatTemperature(context, lowTemperature, isMetric));
 
             // weather icon
-            int weatherId = cursor.getInt(COL_WEATHER_ID);
-            iconImageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_launcher));
+            int weatherId = cursor.getInt(COL_WEATHER_CONDITION_ID);
+            int resourceId = Utility.getArtResourceForWeatherCondition(weatherId);
+            iconImageView.setImageDrawable(context.getResources().getDrawable(resourceId));
             forecastTextView.setText(cursor.getString(COL_WEATHER_DESC));
 
             float humidity = cursor.getFloat(COL_HUMIDITY);

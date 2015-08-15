@@ -51,8 +51,21 @@ public class ForecastAdapter extends CursorAdapter {
         viewHolder.dateView.setText(Utility.getFriendlyDayString(context, dateInMillis));
         // Description
         viewHolder.descriptionView.setText(cursor.getString(ForecastFragment.COL_WEATHER_DESC));
+
         // Icon
-        viewHolder.iconView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_launcher));
+        int weatherId = cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
+        int resourceId;
+
+        int viewType = getItemViewType(cursor.getPosition());
+        if (viewType == VIEW_TYPE_TODAY) {
+            resourceId = Utility.getArtResourceForWeatherCondition(weatherId);
+        } else {
+            resourceId = Utility.getIconResourceForWeatherCondition(weatherId);
+        }
+
+        if (resourceId != -1) {
+            viewHolder.iconView.setImageDrawable(context.getResources().getDrawable(resourceId));
+        }
 
         // Max and min temperatures
         boolean isMetric = Utility.isMetric(context);

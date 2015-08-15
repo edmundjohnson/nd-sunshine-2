@@ -16,7 +16,6 @@
 package com.example.android.sunshine.app;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -142,11 +141,9 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
                     String locationSetting = Utility.getPreferredLocation(getActivity());
-                    Intent intent = new Intent(getActivity(), DetailActivity.class)
-                            .setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
-                                    locationSetting, cursor.getLong(COL_WEATHER_DATE)
-                            ));
-                    startActivity(intent);
+                    long date = cursor.getLong(COL_WEATHER_DATE);
+                    Uri dateUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, date);
+                    ((Callback) getActivity()).onItemSelected(dateUri);
                 }
             }
         });
@@ -160,12 +157,6 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
         String location = Utility.getPreferredLocation(getActivity());
         weatherTask.execute(location);
     }
-
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        updateWeather();
-//    }
 
     @Override
     public void onActivityCreated(Bundle bundle) {
@@ -199,7 +190,7 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
      * Called when a previously created loader has finished its load.  Note
      * that normally an application is <em>not</em> allowed to commit fragment
      * transactions while in this call, since it can happen after an
-     * activity's state is saved.  See {@ link FragmentManager#beginTransaction()
+     * activity's state is saved.  See { @ link FragmentManager#beginTransaction()
      * FragmentManager.openTransaction()} for further discussion on this.
      * <p/>
      * <p>This function is guaranteed to be called prior to the release of
@@ -255,4 +246,17 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
         updateWeather();
         getLoaderManager().restartLoader(FORECAST_LOADER_ID, bundle, this);
     }
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callback {
+        /**
+         * DetailFragmentCallback for when an item has been selected.
+         */
+        void onItemSelected(Uri dateUri);
+    }
+
 }

@@ -62,13 +62,15 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     static final int COL_PRESSURE = 8;
     static final int COL_WEATHER_CONDITION_ID = 9;
 
+    static final String DETAIL_URI = "DETAIL_URI";
+
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
 
     private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
 
-    private static  final int FORECAST_LOADER_ID = 2;
+    private static final int DETAIL_LOADER = 2;
 
-    private String mForecastUri;
+    private Uri mForecastUri;
     private String mForecastStr = "";
 
     private ShareActionProvider mShareActionProvider;
@@ -87,9 +89,28 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         setHasOptionsMenu(true);
     }
 
+    public static DetailFragment newInstance(int index) {
+        DetailFragment df = new DetailFragment();
+
+        Bundle args = new Bundle();
+        args.putInt("index", index);
+        df.setArguments(args);
+
+        return df;
+    }
+
+    private int getShownIndex() {
+        return getArguments().getInt("index", 0);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Bundle args = getArguments();
+        if (args != null) {
+            mForecastUri = args.getParcelable(DETAIL_URI);
+        }
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         dayTextView = (TextView) rootView.findViewById(R.id.day_textview);
@@ -101,12 +122,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         windTextView = (TextView) rootView.findViewById(R.id.wind_textview);
         pressureTextView = (TextView) rootView.findViewById(R.id.pressure_textview);
         iconImageView = (ImageView) rootView.findViewById(R.id.icon_imageview);
-
-        // The detail Activity called via intent.  Inspect the intent for forecast data.
-        Intent intent = getActivity().getIntent();
-        if (intent != null) {
-            mForecastUri = intent.getDataString();
-        }
 
         return rootView;
     }
@@ -143,7 +158,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
-        getLoaderManager().initLoader(FORECAST_LOADER_ID, bundle, this);
+        getLoaderManager().initLoader(DETAIL_LOADER, bundle, this);
     }
 
     /**
@@ -155,12 +170,19 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
      */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(),
-                Uri.parse(mForecastUri),
-                DETAIL_COLUMNS,
-                null,
-                null,
-                null);
+        Log.v(LOG_TAG, "In onCreateLoader");
+
+        if (null != mForecastUri) {
+            // Now create and return a CursorLoader that will take care of
+            // creating a Cursor for the data being displayed.
+            return new CursorLoader(getActivity(),
+                    mForecastUri,
+                    DETAIL_COLUMNS,
+                    null,
+                    null,
+                    null);
+        }
+        return null;
     }
 
     /**
@@ -272,6 +294,22 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
      */
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+    }
+
+    /**
+     * Perform required processing if the location changes,
+     * i.e. update the Uri and restart the loader.
+     * @param newLocation the new location
+     */
+    public void onLocationChanged(String newLocation) {
+        // replace the uri, since the location has changed
+        Uri uri = mForecastUri;
+        if (null != uri) {
+            long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
+            Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
+            mForecastUri = updatedUri;
+            getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
+        }
     }
 
 }

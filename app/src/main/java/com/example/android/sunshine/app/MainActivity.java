@@ -22,7 +22,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Adapter;
 
 public class MainActivity extends AppCompatActivity implements ForecastFragment.Callback {
 
@@ -50,6 +49,12 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
                 getSupportFragmentManager().beginTransaction()
                     .replace(R.id.weather_detail_container, new DetailFragment(), DETAILFRAGMENT_TAG)
                     .commit();
+            }
+        } else {
+            mTwoPane = false;
+            // shadow not wanted in single pane mode
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setElevation(0f);
             }
         }
 

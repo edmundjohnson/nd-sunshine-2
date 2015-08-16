@@ -18,6 +18,14 @@
             android:minWidth="56dp"
             android:orientation="vertical">
 
+            <!--
+            <com.example.android.sunshine.app.customview.MyCustomView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="50dp"
+                android:minHeight="50dp" />
+            -->
+
             <TextView
                 android:id="@+id/day_textview"
                 android:layout_width="wrap_content"

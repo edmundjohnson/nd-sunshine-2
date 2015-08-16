@@ -41,6 +41,8 @@ import static android.support.v4.app.LoaderManager.LoaderCallbacks;
  */
 public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor> {
 
+    private static final String KEY_POSITION = "KEY_POSITION";
+
     private static  final int FORECAST_LOADER_ID = 1;
 
     private static final String[] FORECAST_COLUMNS = {
@@ -75,6 +77,10 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
 
     private ForecastAdapter mForecastAdapter;
 
+    private ListView mListView;
+    private int mSelectedPosition;
+    private boolean mUseTodayLayout;
+
     public ForecastFragment() {
     }
 
@@ -105,7 +111,7 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
 
         String locationSetting = Utility.getPreferredLocation(getActivity());
         Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
@@ -121,25 +127,27 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
                 null,
                 sortOrder);
 
-        // The CursorAdapter will take data from our cursor and populate the ListView.
-        // However, we cannot use FLAG_AUTO_REQUERY since it is deprecated, so we will end
+        // The ForecastAdapter will take data from our cursor and populate the ListView.
+        // We cannot use FLAG_AUTO_REQUERY since it is deprecated, so we will end
         // up with an empty list the first time we run.
         mForecastAdapter = new ForecastAdapter(getActivity(), cur, 0);
+        mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         // Get a reference to the ListView, and attach this adapter to it.
-        ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
-        listView.setAdapter(mForecastAdapter);
+        mListView = (ListView) rootView.findViewById(R.id.listview_forecast);
+        mListView.setAdapter(mForecastAdapter);
 
         // Create a listener for clicking on the list item.
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView adapterView, View view, int position, long l) {
                 // CursorAdapter returns a cursor at the correct position for getItem(), or null
                 // if it cannot seek to that position.
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
+                    mSelectedPosition = position;
                     String locationSetting = Utility.getPreferredLocation(getActivity());
                     long date = cursor.getLong(COL_WEATHER_DATE);
                     Uri dateUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, date);
@@ -148,7 +156,29 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
             }
         });
 
+        // If there's instance state, mine it for useful information.
+        // The end-goal here is that the user never knows that turning their device sideways
+        // does crazy lifecycle related things.  It should feel like some stuff stretched out,
+        // or magically appeared to take advantage of room, but data or place in the app was never
+        // actually *lost*.
+        if (savedInstanceState != null && savedInstanceState.containsKey(KEY_POSITION)) {
+            // The listview probably hasn't even been populated yet.
+            // Actually perform the swapout in onLoadFinished.
+            mSelectedPosition = savedInstanceState.getInt(KEY_POSITION);
+        }
+
         return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        // When device rotates, the currently selected list item needs to be saved.
+        // When no item is selected, mPosition will be set to ListView.INVALID_POSITION,
+        // so check for that before storing.
+        if (mSelectedPosition != ListView.INVALID_POSITION) {
+            outState.putInt(KEY_POSITION, mSelectedPosition);
+        }
+        super.onSaveInstanceState(outState);
     }
 
     private void updateWeather() {
@@ -174,8 +204,16 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         String location = Utility.getPreferredLocation(getActivity());
+
+        // This is called when a new Loader needs to be created.  This
+        // fragment only uses one loader, so we don't care about checking the id.
+
+        // To only show current and future dates, filter the query to return weather only for
+        // dates after or including today.
         long startDate = System.currentTimeMillis();
         Uri uri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(location, startDate);
+
+        // Sort order:  Ascending, by date.
         String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
 
         return new CursorLoader(getActivity(),
@@ -228,6 +266,13 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         mForecastAdapter.swapCursor(cursor);
+
+        // If we don't need to restart the loader, and there's a desired position
+        // to restore to, do so now.
+        if (mSelectedPosition != ListView.INVALID_POSITION) {
+            mListView.smoothScrollToPosition(mSelectedPosition);
+            //((LinearLayout) mListView.getItemAtPosition(mSelectedPosition)).setActivated(true);
+        }
     }
 
     /**
@@ -245,6 +290,13 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
     public void onLocationChanged(Bundle bundle) {
         updateWeather();
         getLoaderManager().restartLoader(FORECAST_LOADER_ID, bundle, this);
+    }
+
+    public void setUseTodayLayout(boolean useTodayLayout) {
+        mUseTodayLayout = useTodayLayout;
+        if (mForecastAdapter != null) {
+            mForecastAdapter.setUseTodayLayout(useTodayLayout);
+        }
     }
 
     /**

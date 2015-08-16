@@ -94,6 +94,6 @@
             android:paddingTop="16dp"
             tools:text="PRESSURE: 1014 hPa" />
 
-
     </LinearLayout>
+
 </ScrollView>

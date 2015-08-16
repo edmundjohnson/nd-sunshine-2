@@ -18,6 +18,8 @@ public class ForecastAdapter extends CursorAdapter {
     private static final int VIEW_TYPE_TODAY = 0;
     private static final int VIEW_TYPE_FUTURE_DAY = 1;
 
+    private boolean mUseTodayLayout;
+
     public ForecastAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
@@ -27,11 +29,16 @@ public class ForecastAdapter extends CursorAdapter {
      */
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
+        int viewType = getItemViewType(cursor.getPosition());
         int layoutId;
-        if (cursor.getPosition() == 0) {
-            layoutId = R.layout.list_item_forecast_today;
-        } else {
-            layoutId = R.layout.list_item_forecast;
+        switch (viewType) {
+            case VIEW_TYPE_TODAY:
+                layoutId = R.layout.list_item_forecast_today;
+                break;
+            case VIEW_TYPE_FUTURE_DAY:
+            default:
+                layoutId = R.layout.list_item_forecast;
+                break;
         }
         View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
@@ -55,17 +62,17 @@ public class ForecastAdapter extends CursorAdapter {
         // Icon
         int weatherId = cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
         int resourceId;
-
         int viewType = getItemViewType(cursor.getPosition());
-        if (viewType == VIEW_TYPE_TODAY) {
-            resourceId = Utility.getArtResourceForWeatherCondition(weatherId);
-        } else {
-            resourceId = Utility.getIconResourceForWeatherCondition(weatherId);
+        switch (viewType) {
+            case VIEW_TYPE_TODAY:
+                resourceId = Utility.getArtResourceForWeatherCondition(weatherId);
+                break;
+            case VIEW_TYPE_FUTURE_DAY:
+            default:
+                resourceId = Utility.getIconResourceForWeatherCondition(weatherId);
+                break;
         }
-
-        if (resourceId != -1) {
-            viewHolder.iconView.setImageDrawable(context.getResources().getDrawable(resourceId));
-        }
+        viewHolder.iconView.setImageResource(resourceId);
 
         // Max and min temperatures
         boolean isMetric = Utility.isMetric(context);
@@ -80,9 +87,13 @@ public class ForecastAdapter extends CursorAdapter {
         return 2;
     }
 
+    public void setUseTodayLayout(boolean useTodayLayout) {
+        this.mUseTodayLayout = useTodayLayout;
+    }
+
     @Override
     public int getItemViewType(int position) {
-        return (position == 0) ? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE_DAY;
+        return (position == 0 && mUseTodayLayout) ? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE_DAY;
     }
 
     /**

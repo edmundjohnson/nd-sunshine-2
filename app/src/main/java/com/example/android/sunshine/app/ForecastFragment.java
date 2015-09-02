@@ -15,7 +15,10 @@
  */
 package com.example.android.sunshine.app;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,6 +36,7 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
+import com.example.android.sunshine.app.service.SunshineService;
 
 import static android.support.v4.app.LoaderManager.LoaderCallbacks;
 
@@ -182,10 +186,22 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
     }
 
     private void updateWeather() {
-        FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
-        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String location = Utility.getPreferredLocation(getActivity());
-        weatherTask.execute(location);
+        Intent alarmIntent = new Intent(getActivity(), SunshineService.AlarmReceiver.class);
+        alarmIntent.putExtra(SunshineService.LOCATION_QUERY_EXTRA, location);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, alarmIntent,
+                PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+        // Set an alarm to broadcast the intent in 5 seconds
+        alarmManager.set(AlarmManager.RTC_WAKEUP,
+                System.currentTimeMillis() + 5000,
+                pendingIntent);
+
+//        //Old version, uses AsyncTask
+//        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//        FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
+//        weatherTask.execute(location);
     }
 
     @Override

@@ -39,7 +39,7 @@ import java.net.URL;
 import java.util.Vector;
 
 public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
-
+    /** Log tag for this class. */
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
     private final Context mContext;

@@ -49,7 +49,7 @@ public class SunshineService extends IntentService {
 
     /**
      * Fetch the weather for an intent which contains a location query.
-     * @param intent
+     * @param intent an intent containing a location query
      */
     private void fetchWeather(Intent intent) {
         String locationQuery = intent.getStringExtra(LOCATION_QUERY_EXTRA);

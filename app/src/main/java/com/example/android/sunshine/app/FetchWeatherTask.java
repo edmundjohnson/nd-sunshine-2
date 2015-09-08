@@ -38,6 +38,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Vector;
 
+/**
+ * AsyncTask for fetching the weather info.
+ * @deprecated SunshineSyncAdapter is used instead
+ */
+@Deprecated
 public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
     /** Log tag for this class. */
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();

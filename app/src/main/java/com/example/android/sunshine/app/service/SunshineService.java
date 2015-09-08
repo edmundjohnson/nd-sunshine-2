@@ -27,7 +27,9 @@ import java.util.Vector;
 /**
  * The sunshine service.
  * @author Edmund Johnson
+ * @deprecated use SunshineSyncAdapter is used instead
  */
+@Deprecated
 public class SunshineService extends IntentService {
     /** Log tag for this class. */
     private final String LOG_TAG = SunshineService.class.getSimpleName();

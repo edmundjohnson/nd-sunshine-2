@@ -23,7 +23,6 @@
             android:exported="false"
             android:syncable="true" />
 
-        <service android:name=".service.SunshineService" />
         <!-- The SyncAdapter service -->
         <service android:name=".sync.SunshineSyncService"
             android:exported="true">
@@ -43,8 +42,6 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
-
-        <receiver android:name=".service.SunshineService$AlarmReceiver" android:enabled="true" />
 
         <activity
             android:name=".MainActivity"

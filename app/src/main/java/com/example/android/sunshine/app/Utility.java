@@ -49,6 +49,10 @@ public class Utility {
         return prefs.getString(context.getString(R.string.pref_units_key), context.getString(R.string.pref_units_metric)).equals(context.getString(R.string.pref_units_metric));
     }
 
+    public static String formatTemperature(Context context, double celsiusTemperature) {
+        return formatTemperature(context, celsiusTemperature, isMetric(context));
+    }
+
     public static String formatTemperature(Context context, double celsiusTemperature, boolean isMetric) {
         double temperature;
         if (isMetric) {

@@ -16,12 +16,14 @@
 package com.example.android.sunshine.app;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,6 +43,7 @@ import static android.support.v4.app.LoaderManager.LoaderCallbacks;
  * Encapsulates fetching the forecast and displaying it as a {@link ListView} layout.
  */
 public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor> {
+    private static final String LOG_TAG = ForecastFragment.class.getSimpleName();
 
     private static final String KEY_POSITION = "KEY_POSITION";
 
@@ -102,12 +105,46 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_refresh) {
-            updateWeather();
-            return true;
+
+        switch (item.getItemId()) {
+//            case R.id.action_refresh:
+//                updateWeather();
+//                return true;
+
+            case R.id.action_map:
+                openPreferredLocationInMap();
+                return true;
+
+            default:
+                Log.w(LOG_TAG, "Unknown menu option");
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
+    }
+
+    private void openPreferredLocationInMap() {
+//        String location = Utility.getPreferredLocation(getActivity());
+
+        if (null != mForecastAdapter) {
+            Cursor c = mForecastAdapter.getCursor();
+            if (c != null) {
+                String lat = c.getString(COL_COORD_LAT);
+                String lon = c.getString(COL_COORD_LONG);
+
+                // Using the URI scheme for showing a location found on a map.  This super-handy
+                // intent is detailed in the "Common Intents" page of Android's developer site:
+                // http://developer.android.com/guide/components/intents-common.html#Maps
+                Uri geoLocation = Uri.parse("geo:" + lat + "," + lon);
+
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(geoLocation);
+
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(intent);
+                } else {
+                    Log.d(LOG_TAG, "Couldn't display map for location (" + lat + ", " + lon + "), no receiving apps installed!");
+                }
+            }
+        }
     }
 
     @Override

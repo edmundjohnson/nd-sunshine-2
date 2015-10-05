@@ -98,7 +98,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             // http://openweathermap.org/API#forecast
             final String FORECAST_BASE_URL =
                     "http://api.openweathermap.org/data/2.5/forecast/daily?";
-            final String QUERY_PARAM = "q";
+            final String QUERY_PARAM = "id";
             final String FORMAT_PARAM = "mode";
             final String UNITS_PARAM = "units";
             final String DAYS_PARAM = "cnt";
@@ -285,7 +285,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             // now we work exclusively in UTC
             dayTime = new Time();
 
-            for(int i = 0; i < weatherArray.length(); i++) {
+            for (int i = 0; i < weatherArray.length(); i++) {
                 // These are the values that will be collected.
                 long dateTime;
                 double pressure;
@@ -303,7 +303,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 JSONObject dayForecast = weatherArray.getJSONObject(i);
 
                 // Cheating to convert this to UTC time, which is what we want anyhow
-                dateTime = dayTime.setJulianDay(julianStartDay+i);
+                dateTime = dayTime.setJulianDay(julianStartDay + i);
 
                 pressure = dayForecast.getDouble(OWM_PRESSURE);
                 humidity = dayForecast.getInt(OWM_HUMIDITY);
@@ -349,6 +349,11 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                         WeatherContract.WeatherEntry.CONTENT_URI,
                         cvArray
                 );
+
+                // delete weather data which is older than 1 day
+                getContext().getContentResolver().delete(WeatherContract.WeatherEntry.CONTENT_URI,
+                        WeatherContract.WeatherEntry.COLUMN_DATE + " <= ? ",
+                        new String[]{ Long.toString(dayTime.setJulianDay(julianStartDay -1)) });
             }
 
             Log.d(LOG_TAG, "getWeatherDataFromJson() complete. " + inserted + " Inserted");

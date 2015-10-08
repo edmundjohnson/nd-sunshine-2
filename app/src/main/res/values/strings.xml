@@ -26,6 +26,9 @@
 
     <string name="weatherIconDescription">weather icon</string>
 
+    <string name="empty_forecast_list">No weather information is available</string>
+    <string name="empty_forecast_list_no_network">No weather information is available. The network is not available to fetch weather data.</string>
+
     <!-- Date label when displaying today's weather forecast [CHAR LIMIT=20] -->
     <string name="today">Today</string>
 
@@ -68,8 +71,8 @@
     <string name="pref_location_key" translatable="false">location</string>
     <!-- Label for the location preference [CHAR LIMIT=30] -->
     <string name="pref_location_label">Location</string>
-    <!-- Default postal code for location preference [CHAR LIMIT=NONE] -->
-    <string name="pref_location_default" translatable="false">94043</string>
+    <!-- Default postal code for location preference (Bristol, UK) [CHAR LIMIT=NONE] -->
+    <string name="pref_location_default" translatable="false">2654675</string>
 
     <!-- Key name for temperature unit preference in SharedPreferences [CHAR LIMIT=NONE] -->
     <string name="pref_units_key" translatable="false">units</string>

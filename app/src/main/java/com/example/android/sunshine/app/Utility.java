@@ -17,6 +17,8 @@ package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
 
@@ -32,6 +34,18 @@ public class Utility {
      * back into date objects for comparison/processing.
      */
     public static final String DATE_FORMAT = "yyyyMMdd";
+
+    /**
+     * Returns whether the device is connected to the internet.
+     * @param context the context
+     * @return true if the device is connected to the internet, false otherwise
+     */
+    public static boolean isNetworkConnection(Context context) {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnectedOrConnecting();
+    }
 
     /**
      * Returns the user's location setting.

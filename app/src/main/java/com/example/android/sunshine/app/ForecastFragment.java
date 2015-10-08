@@ -33,6 +33,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
@@ -69,15 +70,15 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
 
     // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
     // must change.
-    static final int COL_WEATHER_ID = 0;
-    static final int COL_WEATHER_DATE = 1;
-    static final int COL_WEATHER_DESC = 2;
-    static final int COL_WEATHER_MAX_TEMP = 3;
-    static final int COL_WEATHER_MIN_TEMP = 4;
-    static final int COL_LOCATION_SETTING = 5;
-    static final int COL_WEATHER_CONDITION_ID = 6;
-    static final int COL_COORD_LAT = 7;
-    static final int COL_COORD_LONG = 8;
+    public static final int COL_WEATHER_ID = 0;
+    public static final int COL_WEATHER_DATE = 1;
+    public static final int COL_WEATHER_DESC = 2;
+    public static final int COL_WEATHER_MAX_TEMP = 3;
+    public static final int COL_WEATHER_MIN_TEMP = 4;
+    public static final int COL_LOCATION_SETTING = 5;
+    public static final int COL_WEATHER_CONDITION_ID = 6;
+    private static final int COL_COORD_LAT = 7;
+    private static final int COL_COORD_LONG = 8;
 
     private ForecastAdapter mForecastAdapter;
 
@@ -175,6 +176,7 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
 
         // Get a reference to the ListView, and attach this adapter to it.
         mListView = (ListView) rootView.findViewById(R.id.listview_forecast);
+        mListView.setEmptyView(rootView.findViewById(R.id.listview_forecast_empty));
         mListView.setAdapter(mForecastAdapter);
 
         // Create a listener for clicking on the list item.
@@ -325,6 +327,22 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
         if (mSelectedPosition != ListView.INVALID_POSITION) {
             mListView.smoothScrollToPosition(mSelectedPosition);
             //((LinearLayout) mListView.getItemAtPosition(mSelectedPosition)).setActivated(true);
+        }
+        updateEmptyView();
+    }
+
+    private void updateEmptyView() {
+        if (mForecastAdapter.getCount() == 0) {
+            TextView tv = (TextView) getActivity().findViewById(R.id.listview_forecast_empty);
+            if (null != tv) {
+                String message;
+                if (!Utility.isNetworkConnection(getContext())) {
+                    message = getString(R.string.empty_forecast_list_no_network);
+                } else {
+                    message = getString(R.string.empty_forecast_list);
+                }
+                tv.setText(message);
+            }
         }
     }
 

@@ -17,9 +17,11 @@ package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -43,7 +45,9 @@ import static android.support.v4.app.LoaderManager.LoaderCallbacks;
 /**
  * Encapsulates fetching the forecast and displaying it as a {@link ListView} layout.
  */
-public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor> {
+public class ForecastFragment extends Fragment
+        implements LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener {
+
     private static final String LOG_TAG = ForecastFragment.class.getSimpleName();
 
     private static final String KEY_POSITION = "KEY_POSITION";
@@ -94,6 +98,20 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        prefs.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        prefs.unregisterOnSharedPreferenceChangeListener(this);
+        super.onPause();
     }
 
     @Override
@@ -339,7 +357,19 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
                 if (!Utility.isNetworkConnection(getContext())) {
                     message = getString(R.string.empty_forecast_list_no_network);
                 } else {
-                    message = getString(R.string.empty_forecast_list);
+                    @SunshineSyncAdapter.LocationStatus int locationStatus = Utility.getLocationStatus(getContext());
+                    switch (locationStatus) {
+                        case SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN:
+                            message = getString(R.string.empty_forecast_list_server_down);
+                            break;
+                        case SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID:
+                            message = getString(R.string.empty_forecast_list_server_error);
+                            break;
+                        case SunshineSyncAdapter.LOCATION_STATUS_OK:
+                        default:
+                            message = getString(R.string.empty_forecast_list);
+                            break;
+                    }
                 }
                 tv.setText(message);
             }
@@ -367,6 +397,23 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
         mUseTodayLayout = useTodayLayout;
         if (mForecastAdapter != null) {
             mForecastAdapter.setUseTodayLayout(useTodayLayout);
+        }
+    }
+
+    /**
+     * Called when a shared preference is changed, added, or removed. This
+     * may be called even if a preference is set to its existing value.
+     * <p/>
+     * <p>This callback will be run on your main thread.
+     *
+     * @param sharedPreferences The {@link SharedPreferences} that received
+     *                          the change.
+     * @param key               The key of the preference that was changed, added, or
+     */
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (getString(R.string.pref_location_status_key).equals(key)) {
+            updateEmptyView();
         }
     }
 

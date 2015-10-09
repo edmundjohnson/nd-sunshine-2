@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.IntDef;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.format.Time;
@@ -37,6 +38,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Vector;
@@ -46,8 +49,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
     // Interval at which to sync with the weather, in seconds.
     // 60 seconds (1 minute) * 180 = 3 hours
-    public static final int SYNC_INTERVAL = 60 * 180;
-    public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
+    private static final int SYNC_INTERVAL = 60 * 180;
+    private static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
 
     private static final String[] NOTIFY_WEATHER_PROJECTION = new String[] {
             WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
@@ -63,6 +66,14 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
     private static final int WEATHER_NOTIFICATION_ID = 3004;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({LOCATION_STATUS_OK, LOCATION_STATUS_SERVER_DOWN, LOCATION_STATUS_SERVER_INVALID,LOCATION_STATUS_UNKNOWN})
+    public @interface LocationStatus {}
+    public static final int LOCATION_STATUS_OK = 0;
+    public static final int LOCATION_STATUS_SERVER_DOWN = 1;
+    public static final int LOCATION_STATUS_SERVER_INVALID = 2;
+    public static final int LOCATION_STATUS_UNKNOWN = 3;
 
     /**
      * Constructor.
@@ -96,8 +107,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             // Construct the URL for the OpenWeatherMap query
             // Possible parameters are available at OWM's forecast API page, at
             // http://openweathermap.org/API#forecast
-            final String FORECAST_BASE_URL =
-                    "http://api.openweathermap.org/data/2.5/forecast/daily?";
+            final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?";
+            // Next line is for testing errors.  Also possible: "http://google.com/ping?"
+            //final String FORECAST_BASE_URL = "http://google.com/?";
             final String QUERY_PARAM = "id";
             final String FORMAT_PARAM = "mode";
             final String UNITS_PARAM = "units";
@@ -137,6 +149,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
             if (buffer.length() == 0) {
                 // Stream was empty.  No point in parsing.
+                setLocationStatus(getContext(), LOCATION_STATUS_SERVER_DOWN);
                 return;
             }
             forecastJsonStr = buffer.toString();
@@ -147,8 +160,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
-            // If the code didn't successfully get the weather data, there's no point in attempting
-            // to parse it.
+            setLocationStatus(getContext(), LOCATION_STATUS_SERVER_DOWN);
+            // If the code didn't successfully get the weather data, there's no point
+            // in attempting to parse it.
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -185,7 +199,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
      * @param context The context used to access the account service
      * @return a fake account.
      */
-    public static Account getSyncAccount(Context context) {
+    private static Account getSyncAccount(Context context) {
         // Get an instance of the Android account manager
         AccountManager accountManager =
                 (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
@@ -357,9 +371,11 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             }
 
             Log.d(LOG_TAG, "getWeatherDataFromJson() complete. " + inserted + " Inserted");
+            setLocationStatus(getContext(), LOCATION_STATUS_OK);
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
+            setLocationStatus(getContext(), LOCATION_STATUS_SERVER_INVALID);
             e.printStackTrace();
         }
     }
@@ -377,9 +393,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         // Students: First, check if the location with this city name exists in the db
         Cursor cursor = getContext().getContentResolver().query(
                 WeatherContract.LocationEntry.CONTENT_URI,
-                new String[]{ WeatherContract.LocationEntry._ID },
+                new String[]{WeatherContract.LocationEntry._ID},
                 WeatherContract.LocationEntry.COLUMN_CITY_NAME + " = ?",
-                new String[]{ cityName },
+                new String[]{cityName},
                 null);
         // If it exists, return the current ID
         if (cursor.moveToFirst()) {
@@ -403,7 +419,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     /**
      * Helper method to schedule the sync adapter periodic execution
      */
-    public static void configurePeriodicSync(Context context, int syncInterval, int flexTime) {
+    private static void configurePeriodicSync(Context context, int syncInterval, int flexTime) {
         Account account = getSyncAccount(context);
         String authority = context.getString(R.string.content_authority);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -511,10 +527,21 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                     //refreshing last sync
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putLong(lastNotificationKey, System.currentTimeMillis());
+                    // On background thread, so use commit() - on foreground thread, use apply()
                     editor.commit();
                 }
             }
         }
+    }
+
+    // Getters and setters
+
+    private void setLocationStatus(Context context, @LocationStatus int locationStatus) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor spe = prefs.edit();
+        spe.putInt(context.getString(R.string.pref_location_status_key), locationStatus);
+        // On background thread, so use commit() - on foreground thread, use apply()
+        spe.commit();
     }
 
 }

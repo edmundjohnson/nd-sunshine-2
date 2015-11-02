@@ -26,6 +26,11 @@
 
     <string name="weatherIconDescription">weather icon</string>
 
+    <string name="empty_forecast_list">No weather information is available</string>
+    <string name="empty_forecast_list_no_network">No weather information is available. The network is not available to fetch weather data.</string>
+    <string name="empty_forecast_list_server_down">No weather information is available. The network is not returning data.</string>
+    <string name="empty_forecast_list_server_error">No weather information available. The server is not returning valid data. Please check for an updated version of Sunshine.</string>
+
     <!-- Date label when displaying today's weather forecast [CHAR LIMIT=20] -->
     <string name="today">Today</string>
 
@@ -68,8 +73,8 @@
     <string name="pref_location_key" translatable="false">location</string>
     <!-- Label for the location preference [CHAR LIMIT=30] -->
     <string name="pref_location_label">Location</string>
-    <!-- Default postal code for location preference [CHAR LIMIT=NONE] -->
-    <string name="pref_location_default" translatable="false">94043</string>
+    <!-- Default city id for location preference (Bristol, UK) [CHAR LIMIT=NONE] -->
+    <string name="pref_location_default" translatable="false">2654675</string>
 
     <!-- Key name for temperature unit preference in SharedPreferences [CHAR LIMIT=NONE] -->
     <string name="pref_units_key" translatable="false">units</string>
@@ -83,6 +88,11 @@
     <string name="pref_units_label_metric">Metric</string>
     <!-- Label for imperial option in temperature unit preference [CHAR LIMIT=25] -->
     <string name="pref_units_label_imperial">Imperial</string>
+
+    <!-- Key name for storing location status in SharedPreferences [CHAR LIMIT=NONE] -->
+    <string name="pref_location_status_key" translatable="false">location_status</string>
+    <!-- Default location status [CHAR LIMIT=NONE] -->
+    <string name="pref_location_status_default" translatable="false">3</string>
 
     <!-- SyncAdapter related -->
     <string name="sync_account_type">sunshine.example.com</string>

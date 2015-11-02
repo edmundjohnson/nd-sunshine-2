@@ -16,12 +16,16 @@
 package com.example.android.sunshine.app;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,6 +35,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
@@ -40,7 +45,10 @@ import static android.support.v4.app.LoaderManager.LoaderCallbacks;
 /**
  * Encapsulates fetching the forecast and displaying it as a {@link ListView} layout.
  */
-public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor> {
+public class ForecastFragment extends Fragment
+        implements LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private static final String LOG_TAG = ForecastFragment.class.getSimpleName();
 
     private static final String KEY_POSITION = "KEY_POSITION";
 
@@ -66,15 +74,15 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
 
     // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
     // must change.
-    static final int COL_WEATHER_ID = 0;
-    static final int COL_WEATHER_DATE = 1;
-    static final int COL_WEATHER_DESC = 2;
-    static final int COL_WEATHER_MAX_TEMP = 3;
-    static final int COL_WEATHER_MIN_TEMP = 4;
-    static final int COL_LOCATION_SETTING = 5;
-    static final int COL_WEATHER_CONDITION_ID = 6;
-    static final int COL_COORD_LAT = 7;
-    static final int COL_COORD_LONG = 8;
+    public static final int COL_WEATHER_ID = 0;
+    public static final int COL_WEATHER_DATE = 1;
+    public static final int COL_WEATHER_DESC = 2;
+    public static final int COL_WEATHER_MAX_TEMP = 3;
+    public static final int COL_WEATHER_MIN_TEMP = 4;
+    public static final int COL_LOCATION_SETTING = 5;
+    public static final int COL_WEATHER_CONDITION_ID = 6;
+    private static final int COL_COORD_LAT = 7;
+    private static final int COL_COORD_LONG = 8;
 
     private ForecastAdapter mForecastAdapter;
 
@@ -93,6 +101,20 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        prefs.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        prefs.unregisterOnSharedPreferenceChangeListener(this);
+        super.onPause();
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.forecastfragment, menu);
     }
@@ -102,12 +124,46 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_refresh) {
-            updateWeather();
-            return true;
+
+        switch (item.getItemId()) {
+//            case R.id.action_refresh:
+//                updateWeather();
+//                return true;
+
+            case R.id.action_map:
+                openPreferredLocationInMap();
+                return true;
+
+            default:
+                Log.w(LOG_TAG, "Unknown menu option");
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
+    }
+
+    private void openPreferredLocationInMap() {
+//        String location = Utility.getPreferredLocation(getActivity());
+
+        if (null != mForecastAdapter) {
+            Cursor c = mForecastAdapter.getCursor();
+            if (c != null) {
+                String lat = c.getString(COL_COORD_LAT);
+                String lon = c.getString(COL_COORD_LONG);
+
+                // Using the URI scheme for showing a location found on a map.  This super-handy
+                // intent is detailed in the "Common Intents" page of Android's developer site:
+                // http://developer.android.com/guide/components/intents-common.html#Maps
+                Uri geoLocation = Uri.parse("geo:" + lat + "," + lon);
+
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(geoLocation);
+
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(intent);
+                } else {
+                    Log.d(LOG_TAG, "Couldn't display map for location (" + lat + ", " + lon + "), no receiving apps installed!");
+                }
+            }
+        }
     }
 
     @Override
@@ -138,6 +194,7 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
 
         // Get a reference to the ListView, and attach this adapter to it.
         mListView = (ListView) rootView.findViewById(R.id.listview_forecast);
+        mListView.setEmptyView(rootView.findViewById(R.id.listview_forecast_empty));
         mListView.setAdapter(mForecastAdapter);
 
         // Create a listener for clicking on the list item.
@@ -289,6 +346,34 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
             mListView.smoothScrollToPosition(mSelectedPosition);
             //((LinearLayout) mListView.getItemAtPosition(mSelectedPosition)).setActivated(true);
         }
+        updateEmptyView();
+    }
+
+    private void updateEmptyView() {
+        if (mForecastAdapter.getCount() == 0) {
+            TextView tv = (TextView) getActivity().findViewById(R.id.listview_forecast_empty);
+            if (null != tv) {
+                String message;
+                if (!Utility.isNetworkConnection(getContext())) {
+                    message = getString(R.string.empty_forecast_list_no_network);
+                } else {
+                    @SunshineSyncAdapter.LocationStatus int locationStatus = Utility.getLocationStatus(getContext());
+                    switch (locationStatus) {
+                        case SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN:
+                            message = getString(R.string.empty_forecast_list_server_down);
+                            break;
+                        case SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID:
+                            message = getString(R.string.empty_forecast_list_server_error);
+                            break;
+                        case SunshineSyncAdapter.LOCATION_STATUS_OK:
+                        default:
+                            message = getString(R.string.empty_forecast_list);
+                            break;
+                    }
+                }
+                tv.setText(message);
+            }
+        }
     }
 
     /**
@@ -312,6 +397,23 @@ public class ForecastFragment extends Fragment implements LoaderCallbacks<Cursor
         mUseTodayLayout = useTodayLayout;
         if (mForecastAdapter != null) {
             mForecastAdapter.setUseTodayLayout(useTodayLayout);
+        }
+    }
+
+    /**
+     * Called when a shared preference is changed, added, or removed. This
+     * may be called even if a preference is set to its existing value.
+     * <p/>
+     * <p>This callback will be run on your main thread.
+     *
+     * @param sharedPreferences The {@link SharedPreferences} that received
+     *                          the change.
+     * @param key               The key of the preference that was changed, added, or
+     */
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (getString(R.string.pref_location_status_key).equals(key)) {
+            updateEmptyView();
         }
     }
 

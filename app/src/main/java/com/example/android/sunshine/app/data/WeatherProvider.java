@@ -19,11 +19,13 @@ import android.annotation.TargetApi;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 public class WeatherProvider extends ContentProvider {
 
@@ -169,7 +171,7 @@ public class WeatherProvider extends ContentProvider {
 
      */
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
 
         // Use the Uri Matcher to determine what kind of URI this is.
         final int match = sUriMatcher.match(uri);
@@ -190,7 +192,7 @@ public class WeatherProvider extends ContentProvider {
     }
 
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs,
                         String sortOrder) {
         // Here's the switch statement that, given a URI, will determine what kind of request it is,
         // and query the database accordingly.
@@ -235,7 +237,9 @@ public class WeatherProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        if (getContext() != null) {
+            retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        }
         return retCursor;
     }
 
@@ -243,7 +247,7 @@ public class WeatherProvider extends ContentProvider {
         Student: Add the ability to insert Locations to the implementation of this function.
      */
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
         Uri returnUri;
@@ -270,12 +274,12 @@ public class WeatherProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        getContext().getContentResolver().notifyChange(uri, null);
+        notifyChange(uri, null);
         return returnUri;
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         // Student: Start by getting a writable database
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         long rowsDeleted;
@@ -305,7 +309,7 @@ public class WeatherProvider extends ContentProvider {
         // In my implementation of this, I only notified the uri listeners
         // (using the content resolver) if the rowsDeleted != 0 or the selection is null.
         if (rowsDeleted != 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
+            notifyChange(uri, null);
         }
 
         // Student: return the number of rows deleted
@@ -322,7 +326,7 @@ public class WeatherProvider extends ContentProvider {
 
     @Override
     public int update(
-            Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+            @NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         // Student: This is a lot like the delete function.  We return the number of rows impacted
         // by the update.
         // Student: Start by getting a writable database
@@ -351,7 +355,7 @@ public class WeatherProvider extends ContentProvider {
         // Oh, and you should notify the listeners here.
         // Unlike delete, the number of rows updated is returned, even if selection == null
         if (rowsUpdated != 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
+            notifyChange(uri, null);
         }
 
         // Student: return the actual rows updated
@@ -365,7 +369,7 @@ public class WeatherProvider extends ContentProvider {
      * @return the number of rows inserted
      */
     @Override
-    public int bulkInsert(Uri uri, @NonNull ContentValues[] values) {
+    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
         switch (match) {
@@ -385,10 +389,16 @@ public class WeatherProvider extends ContentProvider {
                 } finally {
                     db.endTransaction();
                 }
-                getContext().getContentResolver().notifyChange(uri, null);
+                notifyChange(uri, null);
                 return returnCount;
             default:
                 return super.bulkInsert(uri, values);
+        }
+    }
+
+    private void notifyChange(@NonNull Uri uri, @Nullable ContentObserver observer) {
+        if (getContext() != null && getContext().getContentResolver() != null) {
+            getContext().getContentResolver().notifyChange(uri, null);
         }
     }
 

@@ -34,7 +34,7 @@ public class SunshineService extends IntentService {
     /** Log tag for this class. */
     private final String LOG_TAG = SunshineService.class.getSimpleName();
 
-    public static final String LOCATION_QUERY_EXTRA = "lqe";
+    private static final String LOCATION_QUERY_EXTRA = "lqe";
 
     public SunshineService() {
         super("SunshineService");

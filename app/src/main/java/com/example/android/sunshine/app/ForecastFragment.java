@@ -365,6 +365,9 @@ public class ForecastFragment extends Fragment
                         case SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID:
                             message = getString(R.string.empty_forecast_list_server_error);
                             break;
+                        case SunshineSyncAdapter.LOCATION_STATUS_INVALID:
+                            message = getString(R.string.empty_forecast_list_invalid_location);
+                            break;
                         case SunshineSyncAdapter.LOCATION_STATUS_OK:
                         default:
                             message = getString(R.string.empty_forecast_list);

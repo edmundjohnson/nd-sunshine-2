@@ -60,6 +60,26 @@ public class Utility {
         return locationStatus;
     }
 
+    public static void setLocationStatus(Context context, @SunshineSyncAdapter.LocationStatus int locationStatus, boolean foreground) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor spe = prefs.edit();
+        spe.putInt(context.getString(R.string.pref_location_status_key), locationStatus);
+        // On background thread, use commit(); on foreground thread, use apply()
+        if (foreground) {
+            spe.apply();
+        } else {
+            spe.commit();
+        }
+    }
+
+    /**
+     * Resets the user's location status to Unknown.
+     * @param context the current context
+     */
+    public static void resetLocationStatus(Context context, boolean foreground) {
+        setLocationStatus(context, SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN, foreground);
+    }
+
     /**
      * Returns the user's location setting.
      * @param context the current context

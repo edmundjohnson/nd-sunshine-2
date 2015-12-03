@@ -69,12 +69,17 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final int WEATHER_NOTIFICATION_ID = 3004;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({LOCATION_STATUS_OK, LOCATION_STATUS_SERVER_DOWN, LOCATION_STATUS_SERVER_INVALID,LOCATION_STATUS_UNKNOWN})
+    @IntDef({LOCATION_STATUS_OK,
+            LOCATION_STATUS_SERVER_DOWN,
+            LOCATION_STATUS_SERVER_INVALID,
+            LOCATION_STATUS_UNKNOWN,
+            LOCATION_STATUS_INVALID})
     public @interface LocationStatus {}
     public static final int LOCATION_STATUS_OK = 0;
     public static final int LOCATION_STATUS_SERVER_DOWN = 1;
     public static final int LOCATION_STATUS_SERVER_INVALID = 2;
     public static final int LOCATION_STATUS_UNKNOWN = 3;
+    public static final int LOCATION_STATUS_INVALID = 4;
 
     /**
      * Constructor.
@@ -158,7 +163,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             forecastJsonStr = buffer.toString();
             getWeatherDataFromJson(forecastJsonStr, locationQuery);
 
-            // the next line should possibly be in getWeatherFromJson, after the call to bulkInsert
+            // the next line should possibly be in getWeatherDataFromJson, after the call to bulkInsert
             notifyWeather();
 
         } catch (IOException e) {
@@ -238,7 +243,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     private void getWeatherDataFromJson(String forecastJsonStr, String locationSetting) {
 
         // Now we have a String representing the complete forecast in JSON Format.
-        // Fortunately parsing is easy:  constructor takes the JSON string and converts it
+        // Fortunately parsing is easy: constructor takes the JSON string and converts it
         // into an Object hierarchy for us.
 
         // These are the names of the JSON objects that need to be extracted.
@@ -269,8 +274,28 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         final String OWM_DESCRIPTION = "main";
         final String OWM_WEATHER_ID = "id";
 
+        final String OWM_MESSAGE_CODE = "cod";
+
         try {
             JSONObject forecastJson = new JSONObject(forecastJsonStr);
+
+            // Detect and deal with an response indicating a problem,
+            // e.g. { "message" : "", "cod" : "404" }
+            if (forecastJson.has(OWM_MESSAGE_CODE)) {
+                int responseCode = forecastJson.getInt(OWM_MESSAGE_CODE);
+                Log.d(LOG_TAG, "getWeatherDataFromJson(): response code is " + responseCode);
+                switch (responseCode) {
+                    case HttpURLConnection.HTTP_OK:
+                        break;
+                    case HttpURLConnection.HTTP_NOT_FOUND:
+                        setLocationStatus(getContext(), LOCATION_STATUS_INVALID);
+                        return;
+                    default:
+                        setLocationStatus(getContext(), LOCATION_STATUS_SERVER_DOWN);
+                        return;
+                }
+            }
+
             JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
 
             JSONObject cityJson = forecastJson.getJSONObject(OWM_CITY);
@@ -540,11 +565,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     // Getters and setters
 
     private void setLocationStatus(Context context, @LocationStatus int locationStatus) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor spe = prefs.edit();
-        spe.putInt(context.getString(R.string.pref_location_status_key), locationStatus);
-        // On background thread, so use commit() - on foreground thread, use apply()
-        spe.commit();
+        Utility.setLocationStatus(context, locationStatus, false);
     }
 
 }

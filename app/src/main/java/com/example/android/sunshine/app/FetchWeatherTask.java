@@ -73,7 +73,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
                 new String[]{ cityName },
                 null);
         // If it exists, return the current ID
-        if (cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()) {
             return cursor.getInt(0);
         } else {
             // Otherwise, insert it using the content resolver and the base URI
@@ -86,7 +86,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
             Uri insertUri = mContext.getContentResolver().insert(
                     WeatherContract.LocationEntry.CONTENT_URI,
                     values);
-            return Integer.parseInt(insertUri.getLastPathSegment());
+            return insertUri == null ? 0L : Integer.parseInt(insertUri.getLastPathSegment());
         }
 
     }

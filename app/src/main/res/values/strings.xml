@@ -17,7 +17,7 @@
     <string name="action_share">Share</string>
 
     <!-- Menu label to fetch updated weather info from the server -->
-    <string name="action_refresh" translatable="false">Refresh</string>
+    <!-- <string name="action_refresh" translatable="false">Refresh</string> -->
     <string name="title_activity_detail">Details</string>
     <string name="title_activity_settings">Settings</string>
 
@@ -78,7 +78,7 @@
     <string name="pref_location_default" translatable="false">2654675</string>
     <!-- error statuses displayed on the settings screen -->
     <string name="pref_location_status_invalid_location">Invalid location (<xliff:g id="location_setting">%1$s</xliff:g>)</string>
-    <string name="pref_location_status_unknown_location">Validating location... (<xliff:g id="location_setting">%1$s</xliff:g>)</string>
+    <string name="pref_location_status_unknown_location">Validating location&#8230; (<xliff:g id="location_setting">%1$s</xliff:g>)</string>
 
     <!-- Key name for temperature unit preference in SharedPreferences [CHAR LIMIT=NONE] -->
     <string name="pref_units_key" translatable="false">units</string>
@@ -96,7 +96,7 @@
     <!-- Key name for storing location status in SharedPreferences [CHAR LIMIT=NONE] -->
     <string name="pref_location_status_key" translatable="false">location_status</string>
     <!-- Default location status [CHAR LIMIT=NONE] -->
-    <string name="pref_location_status_default" translatable="false">3</string>
+    <!-- <string name="pref_location_status_default" translatable="false">3</string> -->
 
     <!-- SyncAdapter related -->
     <string name="sync_account_type">sunshine.example.com</string>

@@ -24,7 +24,9 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
+import com.example.android.sunshine.app.customview.LocationEditTextPreference;
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
@@ -39,9 +41,12 @@ import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 public class SettingsActivity extends PreferenceActivity
         implements Preference.OnPreferenceChangeListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
+    private static final String LOG_TAG = SettingsActivity.class.getSimpleName();
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         // Add 'general' preferences, defined in the XML file
         addPreferencesFromResource(R.xml.pref_general);
 
@@ -49,6 +54,10 @@ public class SettingsActivity extends PreferenceActivity
         // updated when the preference changes.
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_units_key)));
+
+        LocationEditTextPreference locationEditTextPreference = (LocationEditTextPreference)
+                findPreference(getString(R.string.pref_location_key));
+        Log.d(LOG_TAG, "Min length = " + locationEditTextPreference.getMinLength());
     }
 
     @Override

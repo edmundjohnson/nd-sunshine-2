@@ -21,7 +21,7 @@ import android.test.AndroidTestCase;
 
 import com.example.android.sunshine.app.data.WeatherContract;
 
-public class TestFetchWeatherTask extends AndroidTestCase{
+public class TestFetchWeatherTask extends AndroidTestCase {
     private static final String ADD_LOCATION_SETTING = "Sunnydale, CA";
     private static final String ADD_LOCATION_CITY = "Sunnydale";
     private static final double ADD_LOCATION_LAT = 34.425833;

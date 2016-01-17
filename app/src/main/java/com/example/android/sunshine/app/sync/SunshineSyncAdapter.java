@@ -279,7 +279,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         try {
             JSONObject forecastJson = new JSONObject(forecastJsonStr);
 
-            // Detect and deal with an response indicating a problem,
+            // Detect and deal with a response indicating a problem,
             // e.g. { "message" : "", "cod" : "404" }
             if (forecastJson.has(OWM_MESSAGE_CODE)) {
                 int responseCode = forecastJson.getInt(OWM_MESSAGE_CODE);

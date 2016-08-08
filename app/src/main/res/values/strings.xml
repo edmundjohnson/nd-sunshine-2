@@ -79,6 +79,7 @@
     <!-- error statuses displayed on the settings screen -->
     <string name="pref_location_status_invalid_location">Invalid location (<xliff:g id="location_setting">%1$s</xliff:g>)</string>
     <string name="pref_location_status_unknown_location">Validating location&#8230; (<xliff:g id="location_setting">%1$s</xliff:g>)</string>
+    <string name="pref_location_status_unable_to_validate_location">Unable to validate location&#8230; (<xliff:g id="location_setting">%1$s</xliff:g>)</string>
 
     <!-- Key name for temperature unit preference in SharedPreferences [CHAR LIMIT=NONE] -->
     <string name="pref_units_key" translatable="false">units</string>
@@ -98,9 +99,9 @@
     <!-- Default location status [CHAR LIMIT=NONE] -->
     <!-- <string name="pref_location_status_default" translatable="false">3</string> -->
 
-    <!-- SyncAdapter related -->
-    <string name="sync_account_type">sunshine.example.com</string>
+    <!-- Data and SyncAdapter related -->
     <string name="content_authority">com.example.android.sunshine.app</string>
+    <string name="sync_account_type">sunshine.example.com</string>
 
     <!-- Notification Format -->
     <string name="format_notification">

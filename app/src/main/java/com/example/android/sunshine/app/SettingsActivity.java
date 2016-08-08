@@ -149,6 +149,9 @@ public class SettingsActivity extends PreferenceActivity
                 return getString(R.string.pref_location_status_unknown_location, location);
             case SunshineSyncAdapter.LOCATION_STATUS_INVALID:
                 return getString(R.string.pref_location_status_invalid_location, location);
+            case SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN:
+            case SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID:
+                return getString(R.string.pref_location_status_unable_to_validate_location, location);
             case SunshineSyncAdapter.LOCATION_STATUS_OK:
             default:
                 return location;

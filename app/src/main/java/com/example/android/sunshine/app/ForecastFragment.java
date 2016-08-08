@@ -23,6 +23,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -173,7 +174,6 @@ public class ForecastFragment extends Fragment
         String locationSetting = Utility.getPreferredLocation(getActivity());
         Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
                 locationSetting, System.currentTimeMillis());
-
         // Sort order:  Ascending, by date.
         String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
 
@@ -301,7 +301,7 @@ public class ForecastFragment extends Fragment
      * Called when a previously created loader has finished its load.  Note
      * that normally an application is <em>not</em> allowed to commit fragment
      * transactions while in this call, since it can happen after an
-     * activity's state is saved.  See { @ link FragmentManager#beginTransaction()
+     * activity's state is saved.  See {@link FragmentManager#beginTransaction()
      * FragmentManager.openTransaction()} for further discussion on this.
      * <p/>
      * <p>This function is guaranteed to be called prior to the release of
@@ -369,6 +369,7 @@ public class ForecastFragment extends Fragment
                             message = getString(R.string.empty_forecast_list_invalid_location);
                             break;
                         case SunshineSyncAdapter.LOCATION_STATUS_OK:
+                        case SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN:
                         default:
                             message = getString(R.string.empty_forecast_list);
                             break;

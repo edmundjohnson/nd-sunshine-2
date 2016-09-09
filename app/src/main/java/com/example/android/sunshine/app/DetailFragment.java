@@ -51,7 +51,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
     // must change.
-    private static final int COL_WEATHER_ID = 0;
+//    private static final int COL_WEATHER_ID = 0;
     private static final int COL_WEATHER_DATE = 1;
     private static final int COL_WEATHER_DESC = 2;
     private static final int COL_WEATHER_MAX_TEMP = 3;
@@ -75,38 +75,38 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     private ShareActionProvider mShareActionProvider;
 
-    private TextView dayTextView;
-    private TextView dateTextView;
-    private TextView highTextView;
-    private TextView lowTextView;
-    private TextView forecastTextView;
-    private TextView humidityTextView;
-    private TextView windTextView;
-    private TextView pressureTextView;
-    private ImageView iconImageView;
+    private TextView mFriendlyDateView;
+    private TextView mDateView;
+    private TextView mHighTempView;
+    private TextView mLowTempView;
+    private TextView mDescriptionView;
+    private TextView mHumidityView;
+    private TextView mWindView;
+    private TextView mPressureView;
+    private ImageView mIconView;
 
     public DetailFragment() {
         setHasOptionsMenu(true);
     }
 
-    /**
-     * Returns a new instance of this class.
-     * @param index the index for the new instance
-     * @return a new instance of this class
-     */
-    public static DetailFragment newInstance(int index) {
-        DetailFragment df = new DetailFragment();
+//    /**
+//     * Returns a new instance of this class.
+//     * @param index the index for the new instance
+//     * @return a new instance of this class
+//     */
+//    public static DetailFragment newInstance(int index) {
+//        DetailFragment df = new DetailFragment();
+//
+//        Bundle args = new Bundle();
+//        args.putInt("index", index);
+//        df.setArguments(args);
+//
+//        return df;
+//    }
 
-        Bundle args = new Bundle();
-        args.putInt("index", index);
-        df.setArguments(args);
-
-        return df;
-    }
-
-    private int getShownIndex() {
-        return getArguments().getInt("index", 0);
-    }
+//    private int getShownIndex() {
+//        return getArguments().getInt("index", 0);
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -118,16 +118,15 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         }
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-        dayTextView = (TextView) rootView.findViewById(R.id.day_textview);
-        dateTextView = (TextView) rootView.findViewById(R.id.date_textview);
-        highTextView = (TextView) rootView.findViewById(R.id.high_textview);
-        lowTextView = (TextView) rootView.findViewById(R.id.low_textview);
-        forecastTextView = (TextView) rootView.findViewById(R.id.forecast_textview);
-        humidityTextView = (TextView) rootView.findViewById(R.id.humidity_textview);
-        windTextView = (TextView) rootView.findViewById(R.id.wind_textview);
-        pressureTextView = (TextView) rootView.findViewById(R.id.pressure_textview);
-        iconImageView = (ImageView) rootView.findViewById(R.id.icon_imageview);
-
+        mIconView = (ImageView) rootView.findViewById(R.id.icon_imageview);
+        mDateView = (TextView) rootView.findViewById(R.id.date_textview);
+        mFriendlyDateView = (TextView) rootView.findViewById(R.id.day_textview);
+        mDescriptionView = (TextView) rootView.findViewById(R.id.forecast_textview);
+        mHighTempView = (TextView) rootView.findViewById(R.id.high_textview);
+        mLowTempView = (TextView) rootView.findViewById(R.id.low_textview);
+        mHumidityView = (TextView) rootView.findViewById(R.id.humidity_textview);
+        mWindView = (TextView) rootView.findViewById(R.id.wind_textview);
+        mPressureView = (TextView) rootView.findViewById(R.id.pressure_textview);
         return rootView;
     }
 
@@ -234,34 +233,72 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if (cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()) {
             // Create a string for the sharing intent
             mForecastStr = convertCursorRowToUXFormat(cursor);
 
             // Write data from the cursor to the screen views
-            Context context = getActivity();
-            dayTextView.setText(Utility.getDayName(context, cursor.getLong(COL_WEATHER_DATE)));
-            dateTextView.setText(Utility.getFormattedMonthDay(context, cursor.getLong(COL_WEATHER_DATE)));
 
+            // weather description
+            // TO DO: Use the weather id to get the description, so it can be internationalised
+            String description = cursor.getString(COL_WEATHER_DESC);
+            mDescriptionView.setText(description);
+            // for accessibility, add a content description
+            mDescriptionView.setContentDescription(getString(R.string.a11y_forecast, description));
+
+            // Day/date
+            Context context = getActivity();
+            long date = cursor.getLong(COL_WEATHER_DATE);
+            mFriendlyDateView.setText(Utility.getDayName(context, date));
+            mDateView.setText(Utility.getFormattedMonthDay(context, date));
+
+            // High and low temperature
             boolean isMetric = Utility.isMetric(getActivity());
-            double highTemperature = cursor.getDouble(COL_WEATHER_MAX_TEMP);
-            highTextView.setText(Utility.formatTemperature(context, highTemperature, isMetric));
-            double lowTemperature = cursor.getDouble(COL_WEATHER_MIN_TEMP);
-            lowTextView.setText(Utility.formatTemperature(context, lowTemperature, isMetric));
+            double highTemp = cursor.getDouble(COL_WEATHER_MAX_TEMP);
+            String highTempString = Utility.formatTemperature(context, highTemp, isMetric);
+            mHighTempView.setText(highTempString);
+            // for accessibility, add a content description
+            mHighTempView.setContentDescription(getString(R.string.a11y_high_temp, highTempString));
+
+            double lowTemp = cursor.getDouble(COL_WEATHER_MIN_TEMP);
+            String lowTempString = Utility.formatTemperature(context, lowTemp, isMetric);
+            mLowTempView.setText(lowTempString);
+            // for accessibility, add a content description
+            mLowTempView.setContentDescription(getString(R.string.a11y_low_temp, lowTempString));
+
+            // weather condition id
+            int weatherId = cursor.getInt(COL_WEATHER_CONDITION_ID);
 
             // weather icon
-            int weatherId = cursor.getInt(COL_WEATHER_CONDITION_ID);
             int resourceId = Utility.getArtResourceForWeatherCondition(weatherId);
-            iconImageView.setImageDrawable(context.getResources().getDrawable(resourceId));
-            forecastTextView.setText(cursor.getString(COL_WEATHER_DESC));
+            //mIconView.setImageDrawable(context.getResources().getDrawable(resourceId));
+            mIconView.setImageResource(resourceId);
+            // for accessibility, add a content description
+            mIconView.setContentDescription(getString(R.string.a11y_forecast_icon, description));
 
+            // humidity
             float humidity = cursor.getFloat(COL_HUMIDITY);
-            humidityTextView.setText(context.getString(R.string.format_humidity, humidity));
+            String humidityString = context.getString(R.string.format_humidity, humidity);
+            mHumidityView.setText(humidityString);
+            // for accessibility, add a content description
+            mHumidityView.setContentDescription(humidityString);
+
+            // wind
             float windSpeed = cursor.getFloat(COL_WIND_SPEED);
             float degrees = cursor.getFloat(COL_DEGREES);
-            windTextView.setText(Utility.getFormattedWind(context, windSpeed, degrees, isMetric));
+            String windString = Utility.getFormattedWind(context, windSpeed, degrees, isMetric);
+            mWindView.setText(windString);
+            // for accessibility, add a content description
+            mWindView.setContentDescription(windString);
+
+
+            // pressure
             float pressure = cursor.getFloat(COL_PRESSURE);
-            pressureTextView.setText(context.getString(R.string.format_pressure, pressure));
+            String pressureString = context.getString(R.string.format_pressure, pressure);
+            mPressureView.setText(pressureString);
+            // for accessibility, add a content description
+            mPressureView.setContentDescription(pressureString);
+
         }
         if (mShareActionProvider != null ) {
             mShareActionProvider.setShareIntent(createShareForecastIntent());
@@ -273,9 +310,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
      */
     private String formatHighLows(double high, double low) {
         boolean isMetric = Utility.isMetric(getActivity());
-        String highLowStr = Utility.formatTemperature(getActivity(), high, isMetric) + "/"
+        return Utility.formatTemperature(getActivity(), high, isMetric) + "/"
                 + Utility.formatTemperature(getActivity(), low, isMetric);
-        return highLowStr;
     }
 
     /*
@@ -314,8 +350,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         Uri uri = mForecastUri;
         if (null != uri) {
             long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
-            Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
-            mForecastUri = updatedUri;
+            // update the URI
+            mForecastUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
             getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
         }
     }

@@ -53,16 +53,10 @@ public class ForecastAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-        // Date
-        long dateInMillis = cursor.getLong(ForecastFragment.COL_WEATHER_DATE);
-        viewHolder.dateView.setText(Utility.getFriendlyDayString(context, dateInMillis));
-        // Description
-        viewHolder.descriptionView.setText(cursor.getString(ForecastFragment.COL_WEATHER_DESC));
-
         // Icon
+        int viewType = getItemViewType(cursor.getPosition());
         int weatherId = cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
         int resourceId;
-        int viewType = getItemViewType(cursor.getPosition());
         switch (viewType) {
             case VIEW_TYPE_TODAY:
                 resourceId = Utility.getArtResourceForWeatherCondition(weatherId);
@@ -73,13 +67,40 @@ public class ForecastAdapter extends CursorAdapter {
                 break;
         }
         viewHolder.iconView.setImageResource(resourceId);
+        // For accessibility, we don't want a content description for the icon field
+        // because the information is repeated in the description view and the icon
+        // is not individually selectable
+        // This is bad! It gets read out as "unlabelled".
+        //viewHolder.iconView.setContentDescription(null);
 
-        // Max and min temperatures
+        // Date
+        long dateInMillis = cursor.getLong(ForecastFragment.COL_WEATHER_DATE);
+        viewHolder.dateView.setText(Utility.getFriendlyDayString(context, dateInMillis));
+
+        // Description
+        // TO DO: Use the weather id to get the description, so it can be internationalised
+        String description = cursor.getString(ForecastFragment.COL_WEATHER_DESC);
+        viewHolder.descriptionView.setText(description);
+        // for accessibility, add a content description
+        viewHolder.descriptionView.setContentDescription(
+                context.getString(R.string.a11y_forecast, description));
+
+        // High temperature
         boolean isMetric = Utility.isMetric(context);
-        double tempMax = cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP);
-        viewHolder.highTempView.setText(Utility.formatTemperature(context, tempMax, isMetric));
-        double tempMin = cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP);
-        viewHolder.lowTempView.setText(Utility.formatTemperature(context, tempMin, isMetric));
+        double highTemp = cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP);
+        String highTempString = Utility.formatTemperature(context, highTemp, isMetric);
+        viewHolder.highTempView.setText(highTempString);
+        // for accessibility, add a content description
+        viewHolder.highTempView.setContentDescription(
+                context.getString(R.string.a11y_high_temp, highTempString));
+
+        // Low temperature
+        double lowTemp = cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP);
+        String lowTempString = Utility.formatTemperature(context, lowTemp, isMetric);
+        viewHolder.lowTempView.setText(lowTempString);
+        // for accessibility, add a content description
+        viewHolder.lowTempView.setContentDescription(
+                context.getString(R.string.a11y_low_temp, lowTempString));
     }
 
     @Override

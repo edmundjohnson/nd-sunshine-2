@@ -46,12 +46,12 @@ import java.net.URL;
 import java.util.Vector;
 
 public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
-    private final String LOG_TAG = SunshineSyncAdapter.class.getSimpleName();
+    private static final String LOG_TAG = SunshineSyncAdapter.class.getSimpleName();
 
     // Interval at which to sync with the weather, in seconds.
     // 60 seconds (1 minute) * 180 = 3 hours
     private static final int SYNC_INTERVAL = 60 * 180;
-    private static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
+    private static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
 
     private static final String[] NOTIFY_WEATHER_PROJECTION = new String[] {
             WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
@@ -188,7 +188,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     /**
-     * Helper method to have the sync adapter sync immediately
+     * Helper method to have the sync adapter sync immediately.
      * @param context The context used to access the account service
      */
     public static void syncImmediately(Context context) {
@@ -236,7 +236,6 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     /**
      * Take the String representing the complete forecast in JSON Format and
      * pull out the data we need to construct the Strings needed for the wireframes.
-     *
      * Fortunately parsing is easy:  constructor takes the JSON string and converts it
      * into an Object hierarchy for us.
      */
@@ -395,7 +394,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 // delete weather data which is older than 1 day
                 getContext().getContentResolver().delete(WeatherContract.WeatherEntry.CONTENT_URI,
                         WeatherContract.WeatherEntry.COLUMN_DATE + " <= ? ",
-                        new String[]{ Long.toString(dayTime.setJulianDay(julianStartDay -1)) });
+                        new String[]{ Long.toString(dayTime.setJulianDay(julianStartDay - 1)) });
             }
 
             Log.d(LOG_TAG, "getWeatherDataFromJson() complete. " + inserted + " Inserted");
@@ -445,7 +444,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     /**
-     * Helper method to schedule the sync adapter periodic execution
+     * Helper method to schedule the sync adapter periodic execution.
      */
     private static void configurePeriodicSync(Context context, int syncInterval, int flexTime) {
         Account account = getSyncAccount(context);

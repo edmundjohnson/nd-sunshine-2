@@ -45,7 +45,7 @@ import java.util.Vector;
 @Deprecated
 public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
     /** Log tag for this class. */
-    private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
+    private static final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
     private final Context mContext;
 
@@ -53,7 +53,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
         mContext = context;
     }
 
-    private boolean DEBUG = true;
+    private static final boolean DEBUG = true;
 
     /**
      * Helper method to handle insertion of a new location in the weather database.
@@ -94,7 +94,6 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
     /**
      * Take the String representing the complete forecast in JSON Format and
      * pull out the data we need to construct the Strings needed for the wireframes.
-     *
      * Fortunately parsing is easy:  constructor takes the JSON string and converts it
      * into an Object hierarchy for us.
      */
@@ -165,7 +164,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
             // now we work exclusively in UTC
             dayTime = new Time();
 
-            for(int i = 0; i < weatherArray.length(); i++) {
+            for (int i = 0; i < weatherArray.length(); i++) {
                 // These are the values that will be collected.
                 long dateTime;
                 double pressure;
@@ -183,7 +182,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
                 JSONObject dayForecast = weatherArray.getJSONObject(i);
 
                 // Cheating to convert this to UTC time, which is what we want anyhow
-                dateTime = dayTime.setJulianDay(julianStartDay+i);
+                dateTime = dayTime.setJulianDay(julianStartDay + i);
 
                 pressure = dayForecast.getDouble(OWM_PRESSURE);
                 humidity = dayForecast.getInt(OWM_HUMIDITY);

@@ -198,7 +198,7 @@ public class Utility {
         int currentJulianDay = Time.getJulianDay(System.currentTimeMillis(), t.gmtoff);
         if (julianDay == currentJulianDay) {
             return context.getString(R.string.today);
-        } else if ( julianDay == currentJulianDay +1 ) {
+        } else if (julianDay == currentJulianDay + 1) {
             return context.getString(R.string.tomorrow);
         } else {
             Time time = new Time();

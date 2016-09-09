@@ -106,6 +106,10 @@ public class ForecastAdapter extends CursorAdapter {
         public final TextView highTempView;
         public final TextView lowTempView;
 
+        /**
+         * Constructor.
+         * @param view the view corresponding to the viewHolder.
+         */
         public ViewHolder(View view) {
             iconView = (ImageView) view.findViewById(R.id.list_item_icon);
             dateView = (TextView) view.findViewById(R.id.list_item_date_textview);

@@ -32,8 +32,8 @@ import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings.
- * <p>
- * See <a href="http://developer.android.com/design/patterns/settings.html">
+ *
+ * <p>See <a href="http://developer.android.com/design/patterns/settings.html">
  * Android Design: Settings</a> for design guidelines and the <a
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
@@ -123,8 +123,7 @@ public class SettingsActivity extends PreferenceActivity
     /**
      * Called when a shared preference is changed, added, or removed. This
      * may be called even if a preference is set to its existing value.
-     * <p/>
-     * <p>This callback will be run on your main thread.
+     * This callback will be run on your main thread.
      *
      * @param sharedPreferences The {@link SharedPreferences} that received
      *                          the change.

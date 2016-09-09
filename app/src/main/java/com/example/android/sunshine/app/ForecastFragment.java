@@ -303,16 +303,18 @@ public class ForecastFragment extends Fragment
      * transactions while in this call, since it can happen after an
      * activity's state is saved.  See {@link FragmentManager#beginTransaction()
      * FragmentManager.openTransaction()} for further discussion on this.
-     * <p/>
+     * </p>
      * <p>This function is guaranteed to be called prior to the release of
      * the last data that was supplied for this Loader.  At this point
      * you should remove all use of the old data (since it will be released
      * soon), but should not do your own release of the data since its Loader
      * owns it and will take care of that.  The Loader will take care of
      * management of its data so you don't have to.  In particular:
-     * <p/>
+     * </p>
+     *
      * <ul>
-     * <li> <p>The Loader will monitor for changes to the data, and report
+     * <li>
+     * The Loader will monitor for changes to the data, and report
      * them to you through new calls here.  You should not monitor the
      * data yourself.  For example, if the data is a {@link Cursor}
      * and you place it in a {@link CursorAdapter}, use
@@ -324,6 +326,7 @@ public class ForecastFragment extends Fragment
      * from doing its own observing of the Cursor, which is not needed since
      * when a change happens you will get a new Cursor throw another call
      * here.
+     * </li>
      * <li> The Loader will release the data once it knows the application
      * is no longer using it.  For example, if the data is
      * a {@link Cursor} from a {@link android.content.CursorLoader},
@@ -331,6 +334,7 @@ public class ForecastFragment extends Fragment
      * {@link CursorAdapter}, you should use the
      * {@link CursorAdapter#swapCursor(Cursor)}
      * method so that the old Cursor is not closed.
+     * </li>
      * </ul>
      *
      * @param cursorLoader the Loader that has finished.
@@ -407,8 +411,7 @@ public class ForecastFragment extends Fragment
     /**
      * Called when a shared preference is changed, added, or removed. This
      * may be called even if a preference is set to its existing value.
-     * <p/>
-     * <p>This callback will be run on your main thread.
+     * This callback will be run on your main thread.
      *
      * @param sharedPreferences The {@link SharedPreferences} that received
      *                          the change.

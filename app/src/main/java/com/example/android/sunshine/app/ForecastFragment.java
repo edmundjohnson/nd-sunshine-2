@@ -208,9 +208,9 @@ public class ForecastFragment extends Fragment
                     mSelectedPosition = position;
                     String locationSetting = Utility.getPreferredLocation(getActivity());
                     long date = cursor.getLong(COL_WEATHER_DATE);
-                    cursor.close();
                     Uri dateUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, date);
                     ((Callback) getActivity()).onItemSelected(dateUri);
+                    // Note: the cursor cannot be closed here - that causes a crash
                 }
             }
         });

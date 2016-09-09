@@ -69,8 +69,10 @@ public class TestProvider extends AndroidTestCase {
                 null,
                 null
         );
-        assertEquals("Error: Records not deleted from Weather table during delete", 0, cursor.getCount());
-        cursor.close();
+        if (cursor != null) {
+            assertEquals("Error: Records not deleted from Weather table during delete", 0, cursor.getCount());
+            cursor.close();
+        }
 
         cursor = mContext.getContentResolver().query(
                 LocationEntry.CONTENT_URI,
@@ -79,8 +81,10 @@ public class TestProvider extends AndroidTestCase {
                 null,
                 null
         );
-        assertEquals("Error: Records not deleted from Location table during delete", 0, cursor.getCount());
-        cursor.close();
+        if (cursor != null) {
+            assertEquals("Error: Records not deleted from Location table during delete", 0, cursor.getCount());
+            cursor.close();
+        }
     }
 
     /*
@@ -233,6 +237,7 @@ public class TestProvider extends AndroidTestCase {
                 null
         );
 
+        assertNotNull(locationCursor);
         // Make sure we get the correct cursor out of the database
         TestUtilities.validateCursor("testBasicLocationQueries, location query", locationCursor, testValues);
 
@@ -294,6 +299,7 @@ public class TestProvider extends AndroidTestCase {
                 null    // sort order
         );
 
+        assertNotNull(cursor);
         TestUtilities.validateCursor("testUpdateLocation.  Error validating location entry update.",
                 cursor, updatedValues);
 
@@ -514,6 +520,7 @@ public class TestProvider extends AndroidTestCase {
                 null, // values for "where" clause
                 WeatherEntry.COLUMN_DATE + " ASC"  // sort order == by DATE ASCENDING
         );
+        assertNotNull(cursor);
 
         // we should have as many records in the database as we've inserted
         assertEquals(cursor.getCount(), BULK_INSERT_RECORDS_TO_INSERT);

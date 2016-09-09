@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
     /** Log tag for this class. */
     //private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    private static final String DETAILFRAGMENT_TAG = "DETAIL_FRAGMENT_TAG";
+    private static final String DETAIL_FRAGMENT_TAG = "DETAIL_FRAGMENT_TAG";
 
     private String mLocation;
     private boolean mTwoPane;
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
             // fragment transaction.
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.weather_detail_container, new DetailFragment(), DETAILFRAGMENT_TAG)
+                    .replace(R.id.weather_detail_container, new DetailFragment(), DETAIL_FRAGMENT_TAG)
                     .commit();
             }
         } else {
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
             if ( null != ff ) {
                 ff.onLocationChanged(null);
             }
-            DetailFragment detailFragment = (DetailFragment) getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
+            DetailFragment detailFragment = (DetailFragment) getSupportFragmentManager().findFragmentByTag(DETAIL_FRAGMENT_TAG);
             if ( null != detailFragment ) {
                 detailFragment.onLocationChanged(location);
             }
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
             DetailFragment detailFragment = new DetailFragment();
             detailFragment.setArguments(args);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.weather_detail_container, detailFragment, DETAILFRAGMENT_TAG)
+                    .replace(R.id.weather_detail_container, detailFragment, DETAIL_FRAGMENT_TAG)
                     .commit();
         } else {
             // Launch detail activity

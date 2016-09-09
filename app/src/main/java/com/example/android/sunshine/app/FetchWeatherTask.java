@@ -74,7 +74,9 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
                 null);
         // If it exists, return the current ID
         if (cursor != null && cursor.moveToFirst()) {
-            return cursor.getInt(0);
+            int rowId = cursor.getInt(0);
+            cursor.close();
+            return rowId;
         } else {
             // Otherwise, insert it using the content resolver and the base URI
             ContentValues values = new ContentValues();

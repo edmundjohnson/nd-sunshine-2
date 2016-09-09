@@ -208,6 +208,7 @@ public class ForecastFragment extends Fragment
                     mSelectedPosition = position;
                     String locationSetting = Utility.getPreferredLocation(getActivity());
                     long date = cursor.getLong(COL_WEATHER_DATE);
+                    cursor.close();
                     Uri dateUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, date);
                     ((Callback) getActivity()).onItemSelected(dateUri);
                 }
@@ -221,7 +222,7 @@ public class ForecastFragment extends Fragment
         // actually *lost*.
         if (savedInstanceState != null && savedInstanceState.containsKey(KEY_POSITION)) {
             // The listview probably hasn't even been populated yet.
-            // Actually perform the swapout in onLoadFinished.
+            // Actually perform the swap out in onLoadFinished.
             mSelectedPosition = savedInstanceState.getInt(KEY_POSITION);
         }
 

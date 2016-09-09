@@ -426,7 +426,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 null);
         // If it exists, return the current ID
         if (cursor != null && cursor.moveToFirst()) {
-            return cursor.getInt(0);
+            int rowId = cursor.getInt(0);
+            cursor.close();
+            return rowId;
         } else {
             // Otherwise, insert it using the content resolver and the base URI
             ContentValues values = new ContentValues();
@@ -506,6 +508,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                     double high = cursor.getDouble(INDEX_MAX_TEMP);
                     double low = cursor.getDouble(INDEX_MIN_TEMP);
                     String desc = cursor.getString(INDEX_SHORT_DESC);
+                    cursor.close();
 
                     int iconId = Utility.getIconResourceForWeatherCondition(weatherId);
                     String title = context.getString(R.string.app_name);

@@ -3,13 +3,13 @@ package com.example.android.sunshine.app.data;
 import android.test.AndroidTestCase;
 
 public class TestPractice extends AndroidTestCase {
-    /*
-        This gets run before every test.
-     */
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
+//    /*
+//     * This gets run before every test.
+//     */
+//    @Override
+//    protected void setUp() throws Exception {
+//        super.setUp();
+//    }
 
     public void testThatDemonstratesAssertions() throws Throwable {
         int a = 5;
@@ -30,8 +30,8 @@ public class TestPractice extends AndroidTestCase {
         //}
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
+//    @Override
+//    protected void tearDown() throws Exception {
+//        super.tearDown();
+//    }
 }

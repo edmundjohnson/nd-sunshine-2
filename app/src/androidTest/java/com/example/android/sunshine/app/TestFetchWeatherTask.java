@@ -65,19 +65,24 @@ public class TestFetchWeatherTask extends AndroidTestCase {
                     null);
 
             // these match the indices of the projection
-            if (locationCursor.moveToFirst()) {
-                assertEquals("Error: the queried value of locationId does not match the returned value" +
-                        "from addLocation", locationCursor.getLong(0), locationId);
-                assertEquals("Error: the queried value of location setting is incorrect",
-                        locationCursor.getString(1), ADD_LOCATION_SETTING);
-                assertEquals("Error: the queried value of location city is incorrect",
-                        locationCursor.getString(2), ADD_LOCATION_CITY);
-                assertEquals("Error: the queried value of latitude is incorrect",
-                        locationCursor.getDouble(3), ADD_LOCATION_LAT);
-                assertEquals("Error: the queried value of longitude is incorrect",
-                        locationCursor.getDouble(4), ADD_LOCATION_LON);
+            if (locationCursor != null) {
+                if (locationCursor.moveToFirst()) {
+                    assertEquals("Error: the queried value of locationId does not match the returned value" +
+                            "from addLocation", locationCursor.getLong(0), locationId);
+                    assertEquals("Error: the queried value of location setting is incorrect",
+                            locationCursor.getString(1), ADD_LOCATION_SETTING);
+                    assertEquals("Error: the queried value of location city is incorrect",
+                            locationCursor.getString(2), ADD_LOCATION_CITY);
+                    assertEquals("Error: the queried value of latitude is incorrect",
+                            locationCursor.getDouble(3), ADD_LOCATION_LAT);
+                    assertEquals("Error: the queried value of longitude is incorrect",
+                            locationCursor.getDouble(4), ADD_LOCATION_LON);
+                } else {
+                    fail("Error: the id you used to query returned an empty cursor");
+                }
+                locationCursor.close();
             } else {
-                fail("Error: the id you used to query returned an empty cursor");
+                fail("Error: the id you used to query returned a null cursor");
             }
 
             // there should be no more records

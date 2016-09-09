@@ -8,8 +8,10 @@
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:gravity="center_vertical"
     android:paddingTop="16dp"
+    android:paddingEnd="16dp"
     android:paddingRight="16dp"
     android:paddingBottom="16dp"
+    android:paddingStart="60dp"
     android:paddingLeft="60dp"
     android:background="@drawable/touch_selector_today"
     android:baselineAligned="false">

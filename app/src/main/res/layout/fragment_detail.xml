@@ -68,12 +68,16 @@
                 android:gravity="center"
                 android:layout_weight="1">
 
+                <!-- adjustViewBounds is required as the image may be downloaded from the internet
+                     and need to be resized after loading -->
                 <ImageView
                     android:id="@+id/icon_imageview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/weatherIconDescription"
                     tools:src="@drawable/art_clear" />
+
                 <TextView
                     android:id="@+id/forecast_textview"
                     android:layout_width="wrap_content"

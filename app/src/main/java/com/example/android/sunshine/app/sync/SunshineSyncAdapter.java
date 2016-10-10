@@ -2,6 +2,7 @@ package com.example.android.sunshine.app.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -14,7 +15,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +29,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.text.format.Time;
 import android.util.Log;
 
+import com.bumptech.glide.Glide;
 import com.example.android.sunshine.app.BuildConfig;
 import com.example.android.sunshine.app.MainActivity;
 import com.example.android.sunshine.app.R;
@@ -44,6 +49,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 
 public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final String LOG_TAG = SunshineSyncAdapter.class.getSimpleName();
@@ -131,6 +137,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                     .build();
 
             URL url = new URL(builtUri.toString());
+
+            Log.d(LOG_TAG, "URL = " + url.toString());
 
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -487,7 +495,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         // check the last update and notify if this is the first of the day
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-        boolean notificationsEnabled = prefs.getBoolean(context.getString(R.string.pref_enable_notifications_key),
+        boolean notificationsEnabled = prefs.getBoolean(
+                context.getString(R.string.pref_enable_notifications_key),
                 Boolean.parseBoolean(context.getString(R.string.pref_enable_notifications_default)));
 
         if (notificationsEnabled) {
@@ -498,10 +507,12 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 // Last sync was more than 1 day ago, let's send a notification with the weather.
                 String locationQuery = Utility.getPreferredLocation(context);
 
-                Uri weatherUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationQuery, System.currentTimeMillis());
+                Uri weatherUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
+                        locationQuery, System.currentTimeMillis());
 
                 // we'll query our contentProvider, as always
-                Cursor cursor = context.getContentResolver().query(weatherUri, NOTIFY_WEATHER_PROJECTION, null, null, null);
+                Cursor cursor = context.getContentResolver().query(
+                        weatherUri, NOTIFY_WEATHER_PROJECTION, null, null, null);
 
                 if (cursor != null && cursor.moveToFirst()) {
                     int weatherId = cursor.getInt(INDEX_WEATHER_ID);
@@ -510,26 +521,65 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                     String desc = cursor.getString(INDEX_SHORT_DESC);
                     cursor.close();
 
+                    // small icon
                     int iconId = Utility.getIconResourceForWeatherCondition(weatherId);
+
+                    // large icon
+                    Resources resources = context.getResources();
+                    int artResourceId = Utility.getArtResourceForWeatherCondition(weatherId);
+                    String artUrl = Utility.getArtUrlForWeatherCondition(context, weatherId);
+
+                    //Bitmap largeIcon = BitmapFactory.decodeResource(resources,
+                    //        Utility.getArtResourceForWeatherCondition(weatherId));
+
+                    // On Honeycomb and higher devices, we can retrieve the size of the large icon.
+                    // Prior to that, we use a fixed size.
+                    @SuppressLint("InlinedApi")
+                    int largeIconWidth = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
+                            ? resources.getDimensionPixelSize(android.R.dimen.notification_large_icon_width)
+                            : resources.getDimensionPixelSize(R.dimen.notification_large_icon_default);
+                    @SuppressLint("InlinedApi")
+                    int largeIconHeight = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
+                            ? resources.getDimensionPixelSize(android.R.dimen.notification_large_icon_height)
+                            : resources.getDimensionPixelSize(R.dimen.notification_large_icon_default);
+                    Bitmap largeIcon;
+                    try {
+                        // asBitmap() as opposed to an animated GIF
+                        // into(...) is the field size
+                        // get() is a blocking call - wait for the image to be fetched
+                        largeIcon = Glide.with(context)
+                                .load(artUrl)
+                                .asBitmap()
+                                .error(artResourceId)
+                                .fitCenter()
+                                .into(largeIconWidth, largeIconHeight)
+                                .get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        // use the local resource
+                        largeIcon = BitmapFactory.decodeResource(resources, artResourceId);
+                    }
+
+                    // title
                     String title = context.getString(R.string.app_name);
 
-                    // Define the text of the forecast.
+                    // define the text of the forecast
                     String contentText = String.format(context.getString(R.string.format_notification),
                             desc,
                             Utility.formatTemperature(context, high),
                             Utility.formatTemperature(context, low));
 
-                    //build your notification here.
-
+                    // build the notification
                     NotificationCompat.Builder mBuilder =
                             new NotificationCompat.Builder(context)
                                     .setSmallIcon(iconId)
+                                    .setLargeIcon(largeIcon)
                                     .setContentTitle(title)
                                     .setContentText(contentText)
                                     .setAutoCancel(true)
                                     .setDefaults(Notification.DEFAULT_ALL);
 
-                    // Create an explicit intent for MainActivity
+                    // Create an explicit intent for clicking on the notification -
+                    // open the app with MainActivity
                     Intent resultIntent = new Intent(context, MainActivity.class);
 
                     // Create a stack builder object containing an artificial back stack for the
@@ -551,7 +601,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                     mBuilder.setContentIntent(resultPendingIntent);
 
                     // Tell the notification manager to display the notification.
-                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                    NotificationManager notificationManager = (NotificationManager)
+                            context.getSystemService(Context.NOTIFICATION_SERVICE);
                     notificationManager.notify(WEATHER_NOTIFICATION_ID, mBuilder.build());
 
                     //refreshing last sync

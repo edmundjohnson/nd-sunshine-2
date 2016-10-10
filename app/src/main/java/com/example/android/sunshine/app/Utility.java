@@ -32,10 +32,10 @@ import java.util.Locale;
 public class Utility {
 
     /**
-     * Format used for storing dates in the database.  ALso used for converting those strings
+     * Format used for storing dates in the database.  Also used for converting those strings
      * back into date objects for comparison/processing.
      */
-    public static final String DATE_FORMAT = "yyyyMMdd";
+    //public static final String DATE_FORMAT = "yyyyMMdd";
 
     /**
      * Returns whether the device is connected to the internet.
@@ -56,11 +56,20 @@ public class Utility {
      */
     public static @SunshineSyncAdapter.LocationStatus int getLocationStatus(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        @SunshineSyncAdapter.LocationStatus int locationStatus =  prefs.getInt(context.getString(R.string.pref_location_status_key), SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
+        @SunshineSyncAdapter.LocationStatus int locationStatus =
+                prefs.getInt(context.getString(R.string.pref_location_status_key),
+                        SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
         return locationStatus;
     }
 
-    public static void setLocationStatus(Context context, @SunshineSyncAdapter.LocationStatus int locationStatus, boolean foreground) {
+    /**
+     * Sets the user's location status.
+     * @param context the current context
+     * @param locationStatus the new location status
+     * @param foreground set this true if calling this method on a UI thread, false otherwise
+     */
+    public static void setLocationStatus(Context context,
+                    @SunshineSyncAdapter.LocationStatus int locationStatus, boolean foreground) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor spe = prefs.edit();
         spe.putInt(context.getString(R.string.pref_location_status_key), locationStatus);
@@ -87,13 +96,16 @@ public class Utility {
      */
     public static String getPreferredLocation(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String location = prefs.getString(context.getString(R.string.pref_location_key), context.getString(R.string.pref_location_default));
+        String location = prefs.getString(context.getString(R.string.pref_location_key),
+                context.getString(R.string.pref_location_default));
         return location.isEmpty() ? context.getString(R.string.pref_location_default) : location;
     }
 
     public static boolean isMetric(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString(context.getString(R.string.pref_units_key), context.getString(R.string.pref_units_metric)).equals(context.getString(R.string.pref_units_metric));
+        return prefs.getString(context.getString(R.string.pref_units_key),
+                context.getString(R.string.pref_units_metric)).
+                    equals(context.getString(R.string.pref_units_metric));
     }
 
     public static String formatTemperature(Context context, double celsiusTemperature) {
@@ -290,6 +302,41 @@ public class Utility {
             return R.drawable.art_clouds;
         }
         return -1;
+    }
+
+    /**
+     * Return the URL for the weather art image corresponding to a weatherId.
+     * @param context the context
+     * @param weatherId the weather id
+     * @return the URL for the weather art image corresponding to a weatherId
+     */
+    public static String getArtUrlForWeatherCondition(Context context, int weatherId) {
+        // Based on weather code data found at:
+        // http://bugs.openweathermap.org/projects/api/wiki/Weather_Condition_Codes
+        if (weatherId >= 200 && weatherId <= 232) {
+            return context.getString(R.string.format_art_url, "storm");
+        } else if (weatherId >= 300 && weatherId <= 321) {
+            return context.getString(R.string.format_art_url, "light_rain");
+        } else if (weatherId >= 500 && weatherId <= 504) {
+            return context.getString(R.string.format_art_url, "rain");
+        } else if (weatherId == 511) {
+            return context.getString(R.string.format_art_url, "snow");
+        } else if (weatherId >= 520 && weatherId <= 531) {
+            return context.getString(R.string.format_art_url, "rain");
+        } else if (weatherId >= 600 && weatherId <= 622) {
+            return context.getString(R.string.format_art_url, "snow");
+        } else if (weatherId >= 701 && weatherId <= 761) {
+            return context.getString(R.string.format_art_url, "fog");
+        } else if (weatherId == 761 || weatherId == 781) {
+            return context.getString(R.string.format_art_url, "storm");
+        } else if (weatherId == 800) {
+            return context.getString(R.string.format_art_url, "clear");
+        } else if (weatherId == 801) {
+            return context.getString(R.string.format_art_url, "light_clouds");
+        } else if (weatherId >= 802 && weatherId <= 804) {
+            return context.getString(R.string.format_art_url, "clouds");
+        }
+        return null;
     }
 
 }

@@ -22,6 +22,7 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.android.sunshine.app.data.WeatherContract;
 
 /**
@@ -270,9 +271,18 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             int weatherId = cursor.getInt(COL_WEATHER_CONDITION_ID);
 
             // weather icon
-            int resourceId = Utility.getArtResourceForWeatherCondition(weatherId);
-            //mIconView.setImageDrawable(context.getResources().getDrawable(resourceId));
-            mIconView.setImageResource(resourceId);
+//            int resourceId = Utility.getArtResourceForWeatherCondition(weatherId);
+//            //mIconView.setImageDrawable(context.getResources().getDrawable(resourceId));
+//            mIconView.setImageResource(resourceId);
+
+            // Glide library call.
+            // .error(...) indicates a resource to be used if the load resource cannot be loaded
+            // .crossFade() indicates a transition animation (?)
+            Glide.with(this)
+                    .load(Utility.getArtUrlForWeatherCondition(getActivity(), weatherId))
+                    .error(Utility.getArtResourceForWeatherCondition(weatherId))
+                    .crossFade()
+                    .into(mIconView);
             // for accessibility, add a content description
             mIconView.setContentDescription(getString(R.string.a11y_forecast_icon, description));
 

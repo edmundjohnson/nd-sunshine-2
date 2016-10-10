@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 /**
  * {@link ForecastAdapter} exposes a list of weather forecasts
  * from a {@link android.database.Cursor} to a {@link android.widget.ListView}.
@@ -56,21 +58,30 @@ public class ForecastAdapter extends CursorAdapter {
         // Icon
         int viewType = getItemViewType(cursor.getPosition());
         int weatherId = cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
-        int resourceId;
+        int localIconId;
         switch (viewType) {
             case VIEW_TYPE_TODAY:
-                resourceId = Utility.getArtResourceForWeatherCondition(weatherId);
+                localIconId = Utility.getArtResourceForWeatherCondition(weatherId);
                 break;
             case VIEW_TYPE_FUTURE_DAY:
             default:
-                resourceId = Utility.getIconResourceForWeatherCondition(weatherId);
+                localIconId = Utility.getIconResourceForWeatherCondition(weatherId);
                 break;
         }
-        viewHolder.iconView.setImageResource(resourceId);
-        // For accessibility, we don't want a content description for the icon field
+        //viewHolder.iconView.setImageResource(resourceId);
+
+        // Glide library call.
+        // .error(...) indicates a resource to be used if the load resource cannot be loaded
+        Glide.with(context)
+                .load(Utility.getArtUrlForWeatherCondition(context, weatherId))
+                .error(localIconId)
+                .crossFade()
+                .into(viewHolder.iconView);
+
+       // For accessibility, we don't want a content description for the icon field
         // because the information is repeated in the description view and the icon
         // is not individually selectable
-        // This is bad! It gets read out as "unlabelled".
+        // The next line is bad! It gets read out as "unlabelled".
         //viewHolder.iconView.setContentDescription(null);
 
         // Date

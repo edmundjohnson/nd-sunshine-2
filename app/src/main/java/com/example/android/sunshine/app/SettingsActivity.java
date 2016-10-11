@@ -54,6 +54,7 @@ public class SettingsActivity extends PreferenceActivity
         // updated when the preference changes.
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_units_key)));
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_icons_key)));
 
         LocationEditTextPreference locationEditTextPreference = (LocationEditTextPreference)
                 findPreference(getString(R.string.pref_location_key));
@@ -131,12 +132,14 @@ public class SettingsActivity extends PreferenceActivity
      */
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        // If the location has changed, get data for the new location
         if (key.equals(getString(R.string.pref_location_key))) {
             Utility.resetLocationStatus(this, true);
             SunshineSyncAdapter.syncImmediately(this);
 
-        } else if (key.equals(getString(R.string.pref_units_key))) {
-            // units have changed, update lists of weather entries accordingly
+        // If the units or icons have changed, update the lists of weather entries accordingly
+        } else if (key.equals(getString(R.string.pref_units_key))
+                || key.equals(getString(R.string.pref_icons_key))) {
             getContentResolver().notifyChange(WeatherContract.WeatherEntry.CONTENT_URI, null);
         }
     }

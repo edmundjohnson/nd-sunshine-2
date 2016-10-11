@@ -9,7 +9,8 @@
     <string name="app_name">Sunshine</string>
 
     <!-- Format for retrieving art from an external source [CHAR LIMIT=NONE] -->
-    <string name="format_art_url" translatable="false">https://raw.githubusercontent.com/udacity/Sunshine-Version-2/sunshine_master/app/src/main/res/drawable-xxhdpi/art_<xliff:g id="description">%s</xliff:g>.png</string>
+    <string name="format_art_url_1" translatable="false">https://raw.githubusercontent.com/udacity/Sunshine-Version-2/sunshine_master/app/src/main/res/drawable-xxhdpi/art_<xliff:g id="description">%s</xliff:g>.png</string>
+    <string name="format_art_url_2" translatable="false">https://raw.githubusercontent.com/udacity/Sunshine-Version-2/sunshine_master/app/src/main/res/drawable-mdpi/art_<xliff:g id="description">%s</xliff:g>.png</string>
 
     <!--
          By convention, "action" denotes that this String will be used as the label for an Action,
@@ -96,6 +97,19 @@
     <string name="pref_units_label_metric">Metric</string>
     <!-- Label for imperial option in temperature unit preference [CHAR LIMIT=25] -->
     <string name="pref_units_label_imperial">Imperial</string>
+
+    <!-- Key name for icon preference in SharedPreferences [CHAR LIMIT=NONE] -->
+    <string name="pref_icons_key" translatable="false">icons</string>
+    <!-- Value in SharedPreferences for icon pack 1 option [CHAR LIMIT=NONE] -->
+    <string name="pref_icons_pack_1" translatable="false">pack_1</string>
+    <!-- Value in SharedPreferences for icon pack 2 option [CHAR LIMIT=NONE] -->
+    <string name="pref_icons_pack_2" translatable="false">pack_2</string>
+    <!-- Label for the icons preference [CHAR LIMIT=30] -->
+    <string name="pref_icons_label">Icon Pack</string>
+    <!-- Label for icon pack 1 option in icon preference [CHAR LIMIT=25] -->
+    <string name="pref_icons_label_pack_1">Icon Pack 1</string>
+    <!-- Label for icon pack 2 option in icon preference [CHAR LIMIT=25] -->
+    <string name="pref_icons_label_pack_2">Icon Pack 2</string>
 
     <!-- Key name for storing location status in SharedPreferences [CHAR LIMIT=NONE] -->
     <string name="pref_location_status_key" translatable="false">location_status</string>

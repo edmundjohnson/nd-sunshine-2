@@ -7,8 +7,22 @@
     android:orientation="horizontal"
     tools:context="com.example.android.sunshine.app.MainActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <ImageView
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/ic_logo"
+            android:scaleType="center"
+            />
+    </android.support.v7.widget.Toolbar>
+
     <!--
-    This layout is a two-pane layout for the Items master/detail flow.
+    This is a two-pane layout for the items master/detail flow.
     -->
 
     <fragment

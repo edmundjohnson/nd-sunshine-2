@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-condensed"
             android:textSize="16sp"
-            android:textColor="@color/dark_grey"
+            android:textColor="@color/grey_700"
             tools:text="June 24" />
 
         <LinearLayout
@@ -56,7 +56,7 @@
                     android:paddingTop="8dp"
                     android:fontFamily="sans-serif-light"
                     android:textSize="48sp"
-                    android:textColor="@color/dark_grey"
+                    android:textColor="@color/grey_700"
                     tools:text="8\u00B0" />
 
             </LinearLayout>
@@ -85,7 +85,7 @@
                     android:paddingTop="8dp"
                     android:fontFamily="sans-serif-condensed"
                     android:textSize="22sp"
-                    android:textColor="@color/dark_grey"
+                    android:textColor="@color/grey_700"
                     tools:text="Clear" />
 
             </LinearLayout>
@@ -99,7 +99,7 @@
             android:paddingTop="16dp"
             android:fontFamily="sans-serif-light"
             android:textSize="22sp"
-            android:textColor="@color/dark_grey"
+            android:textColor="@color/grey_700"
             tools:text="Humidity: 84%" />
 
         <TextView
@@ -109,7 +109,7 @@
             android:paddingTop="4dp"
             android:fontFamily="sans-serif-light"
             android:textSize="22sp"
-            android:textColor="@color/dark_grey"
+            android:textColor="@color/grey_700"
             tools:text="Pressure: 1014 hPa" />
 
         <TextView
@@ -119,7 +119,7 @@
             android:paddingTop="4dp"
             android:fontFamily="sans-serif-light"
             android:textSize="22sp"
-            android:textColor="@color/dark_grey"
+            android:textColor="@color/grey_700"
             tools:text="Wind: 6km/h NW" />
 
     </LinearLayout>

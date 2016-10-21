@@ -112,8 +112,8 @@ public class Utility {
     @NonNull
     private static String getIconPref(@NonNull Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString(context.getString(R.string.pref_icons_key),
-                context.getString(R.string.pref_icons_pack_1));
+        return prefs.getString(context.getString(R.string.pref_art_pack_key),
+                context.getString(R.string.pref_art_pack_sunshine));
     }
 
     public static String formatTemperature(Context context, double celsiusTemperature) {
@@ -201,6 +201,28 @@ public class Utility {
     }
 
     /**
+     * Helper method to convert the database representation of the date into something to display
+     * to users.  As classy and polished a user experience as "20140102" is, we can do better.
+     *
+     * @param context Context to use for resource localization
+     * @param dateInMillis The date in milliseconds
+     * @return a user-friendly representation of the date.
+     */
+    public static String getFullFriendlyDayString(Context context, long dateInMillis) {
+
+        String day = getDayName(context, dateInMillis);
+        int formatId = R.string.format_full_friendly_date;
+//        return String.format(context.getString(
+//                formatId,
+//                day,
+//                getFormattedMonthDay(context, dateInMillis)));
+        return context.getString(
+                formatId,
+                day,
+                getFormattedMonthDay(context, dateInMillis));
+    }
+
+    /**
      * Given a day, returns just the name to use for that day.
      * E.g "today", "tomorrow", "wednesday".
      *
@@ -208,7 +230,7 @@ public class Utility {
      * @param dateInMillis the date in milliseconds
      * @return the day description for the date
      */
-    public static String getDayName(Context context, long dateInMillis) {
+    private static String getDayName(Context context, long dateInMillis) {
         // If the date is today, return the localized version of "Today" instead of the actual
         // day name.
 
@@ -236,12 +258,25 @@ public class Utility {
      *                in Utility.DATE_FORMAT
      * @return The day in the form of a string formatted "December 6"
      */
-    public static String getFormattedMonthDay(Context context, long dateInMillis ) {
+    private static String getFormattedMonthDay(Context context, long dateInMillis ) {
         Time time = new Time();
         time.setToNow();
         //SimpleDateFormat dbDateFormat = new SimpleDateFormat(Utility.DATE_FORMAT, Locale.getDefault());
         SimpleDateFormat monthDayFormat = new SimpleDateFormat("MMMM dd", Locale.getDefault());
         return monthDayFormat.format(dateInMillis);
+    }
+
+    /**
+     * Helper method to return whether or not Sunshine is using local graphics.
+     *
+     * @param context Context to use for retrieving the preference
+     * @return true if Sunshine is using local graphics, false otherwise.
+     */
+    public static boolean usingLocalGraphics(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String sunshineArtPack = context.getString(R.string.pref_art_pack_sunshine);
+        return prefs.getString(context.getString(R.string.pref_art_pack_key),
+                sunshineArtPack).equals(sunshineArtPack);
     }
 
     /**
@@ -354,9 +389,9 @@ public class Utility {
 
     private static String getFormatArtUrl(Context context) {
         String iconPref = getIconPref(context);
-        if (iconPref.equals(context.getString(R.string.pref_icons_pack_1))) {
+        if (iconPref.equals(context.getString(R.string.pref_art_pack_sunshine))) {
             return context.getString(R.string.format_art_url_1);
-        } else if (iconPref.equals(context.getString(R.string.pref_icons_pack_2))) {
+        } else if (iconPref.equals(context.getString(R.string.pref_art_pack_cute_dogs))) {
             return context.getString(R.string.format_art_url_2);
         } else {
             return null;

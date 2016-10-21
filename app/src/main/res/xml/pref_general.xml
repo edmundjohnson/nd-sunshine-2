@@ -21,9 +21,9 @@
         android:entries="@array/pref_units_options" />
 
     <ListPreference
-        android:key="@string/pref_icons_key"
-        android:title="@string/pref_icons_label"
-        android:defaultValue="@string/pref_icons_pack_1"
+        android:key="@string/pref_art_pack_key"
+        android:title="@string/pref_art_pack_label"
+        android:defaultValue="@string/pref_art_pack_sunshine"
         android:entryValues="@array/pref_icons_values"
         android:entries="@array/pref_icons_options" />
 

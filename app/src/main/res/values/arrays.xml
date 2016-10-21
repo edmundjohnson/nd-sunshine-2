@@ -12,13 +12,13 @@
     </string-array>
 
     <string-array name="pref_icons_options">
-        <item>@string/pref_icons_label_pack_1</item>
-        <item>@string/pref_icons_label_pack_2</item>
+        <item>@string/pref_art_pack_label_sunshine</item>
+        <item>@string/pref_art_pack_label_cute_dogs</item>
     </string-array>
 
     <string-array name="pref_icons_values">
-        <item>@string/pref_icons_pack_1</item>
-        <item>@string/pref_icons_pack_2</item>
+        <item>@string/pref_art_pack_sunshine</item>
+        <item>@string/pref_art_pack_cute_dogs</item>
     </string-array>
 
 </resources>

@@ -54,7 +54,7 @@ public class SettingsActivity extends PreferenceActivity
         // updated when the preference changes.
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_units_key)));
-        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_icons_key)));
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_art_pack_key)));
 
         LocationEditTextPreference locationEditTextPreference = (LocationEditTextPreference)
                 findPreference(getString(R.string.pref_location_key));
@@ -139,7 +139,7 @@ public class SettingsActivity extends PreferenceActivity
 
         // If the units or icons have changed, update the lists of weather entries accordingly
         } else if (key.equals(getString(R.string.pref_units_key))
-                || key.equals(getString(R.string.pref_icons_key))) {
+                || key.equals(getString(R.string.pref_art_pack_key))) {
             getContentResolver().notifyChange(WeatherContract.WeatherEntry.CONTENT_URI, null);
         }
     }

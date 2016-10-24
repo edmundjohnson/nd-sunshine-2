@@ -8,12 +8,6 @@
         <item name="toolbarStyle">@style/Toolbar</item>
     </style>
 
-    <!-- toolbar style -->
-    <style name="Toolbar" parent="Widget.AppCompat.Toolbar">
-        <item name="android:background">?attr/colorPrimary</item>
-        <item name="popupTheme">@style/Theme.AppCompat.Light</item>
-    </style>
-
     <!-- Main activity theme. -->
     <!--
     <style name="ForecastTheme" parent="AppTheme">
@@ -23,6 +17,12 @@
 
     <!-- Settings activity theme. -->
     <style name="SettingsTheme" parent="AppTheme">
+    </style>
+
+    <!-- toolbar style -->
+    <style name="Toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="popupTheme">@style/Theme.AppCompat.Light</item>
     </style>
 
     <!-- main activity action bar styles -->

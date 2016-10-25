@@ -1,0 +1,62 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.android.sunshine.app.MainActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
+        android:elevation="@dimen/appbar_elevation"
+        app:elevation="@dimen/appbar_elevation"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        />
+
+    <ImageView
+        android:id="@+id/logo_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/listPreferredItemHeight"
+        android:layout_below="@id/toolbar"
+        android:src="@drawable/ic_logo"
+        android:scaleType="center"
+        android:background="@color/primary"
+        android:contentDescription="@string/app_name"
+        android:elevation="@dimen/appbar_elevation"
+        app:elevation="@dimen/appbar_elevation"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/details_app_bar_overlap"
+        android:layout_below="@id/logo_image_view"
+        android:background="@color/primary"
+        android:elevation="@dimen/appbar_elevation"
+        app:elevation="@dimen/appbar_elevation">
+    </View>
+
+    <FrameLayout
+        android:id="@+id/weather_detail_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/logo_image_view"
+        android:layout_marginStart="@dimen/abc_list_item_padding_horizontal"
+        android:layout_marginLeft="@dimen/abc_list_item_padding_horizontal"
+        android:layout_marginEnd="@dimen/abc_list_item_padding_horizontal"
+        android:layout_marginRight="@dimen/abc_list_item_padding_horizontal"
+        android:elevation="@dimen/appbar_elevation"
+        app:elevation="@dimen/appbar_elevation" />
+
+    <fragment
+        android:id="@+id/fragment_forecast"
+        android:name="com.example.android.sunshine.app.ForecastFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/weather_detail_container"
+        tools:layout="@android:layout/list_content" />
+
+</RelativeLayout>

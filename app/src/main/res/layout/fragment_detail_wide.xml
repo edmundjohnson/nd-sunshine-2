@@ -27,8 +27,7 @@
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            >
+            android:layout_weight="1">
 
             <include layout="@layout/detail_today_grid"
                 android:layout_width="match_parent"
@@ -38,9 +37,9 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                android:background="@android:color/transparent"
                 android:elevation="0dp"
                 app:elevation="0dp"
-                android:background="@android:color/transparent"
                 />
 
         </FrameLayout>

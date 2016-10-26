@@ -15,9 +15,6 @@
  -->
 <resources>
 
-    <!-- list items -->
-    <dimen name="list_item_extra_padding">32dp</dimen>
-
     <!-- detail view -->
     <!-- Extra Padding - This one is actually smaller on tablets -->
     <dimen name="detail_view_extra_padding">0dp</dimen>

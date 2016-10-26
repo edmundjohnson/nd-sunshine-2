@@ -13,8 +13,8 @@
 
     <TextView
         android:id="@+id/list_item_date_textview"
-        android:layout_marginBottom="@dimen/abc_list_item_padding_horizontal"
-        android:layout_marginTop="@dimen/abc_list_item_padding_horizontal"
+        android:layout_marginBottom="@dimen/abc_list_item_padding_horizontal_material"
+        android:layout_marginTop="@dimen/abc_list_item_padding_horizontal_material"
         android:fontFamily="sans-serif"
         android:gravity="center_horizontal"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
@@ -59,7 +59,7 @@
     <TextView
         android:id="@+id/list_item_low_textview"
         android:layout_width="0dp"
-        android:layout_marginBottom="@dimen/abc_list_item_padding_horizontal"
+        android:layout_marginBottom="@dimen/abc_list_item_padding_horizontal_material"
         android:fontFamily="sans-serif-light"
         android:gravity="center_horizontal"
         android:textColor="@color/secondary_text"

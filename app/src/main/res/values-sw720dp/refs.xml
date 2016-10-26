@@ -1,3 +1,0 @@
-<resources>
-    <item type="layout" name="fragment_detail_start">@layout/fragment_detail_wide</item>
-</resources>

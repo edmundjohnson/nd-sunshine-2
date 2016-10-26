@@ -11,6 +11,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -201,8 +203,15 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                     null,
                     null);
         }
+        // In the case where the master and the detail are on screen at the same time, i.e.
+        // on tablets / landscape, this prevents an empty detail pane being displayed prior
+        // to any list item being selected.
+        // The detail card is made visible in onLoadFinished().
         if (getView() != null) {
-            getView().setVisibility(View.INVISIBLE);
+            ViewParent vp = getView().getParent();
+            if (vp instanceof CardView) {
+                ((View)vp).setVisibility(View.INVISIBLE);
+            }
         }
         return null;
     }
@@ -253,7 +262,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if (cursor != null && cursor.moveToFirst()) {
             if (getView() != null) {
-                getView().setVisibility(View.VISIBLE);
+                ViewParent vp = getView().getParent();
+                if (vp instanceof CardView) {
+                    ((View)vp).setVisibility(View.VISIBLE);
+                }
             }
 
             // Write data from the cursor to the screen views

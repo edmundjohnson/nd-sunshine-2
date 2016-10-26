@@ -1,0 +1,7 @@
+<resources>
+
+    <!-- List items -->
+    <dimen name="forecast_temperature_space">16dp</dimen>
+    <dimen name="list_item_extra_padding">80dp</dimen>
+
+</resources>

@@ -11,7 +11,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -76,7 +75,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private Uri mForecastUri;
     private String mForecastStr = "";
 
-    private ShareActionProvider mShareActionProvider;
+//    private ShareActionProvider mShareActionProvider;
 
 //    private TextView mFriendlyDateView;
     private TextView mDateView;
@@ -123,7 +122,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             mForecastUri = args.getParcelable(DETAIL_URI);
         }
 
-        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_detail_start, container, false);
         mIconView = (ImageView) rootView.findViewById(R.id.detail_icon);
         mDateView = (TextView) rootView.findViewById(R.id.detail_date_textview);
 //        mFriendlyDateView = (TextView) rootView.findViewById(R.id.detail_day_textview);
@@ -202,6 +201,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                     null,
                     null);
         }
+        if (getView() != null) {
+            getView().setVisibility(View.INVISIBLE);
+        }
         return null;
     }
 
@@ -250,6 +252,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if (cursor != null && cursor.moveToFirst()) {
+            if (getView() != null) {
+                getView().setVisibility(View.VISIBLE);
+            }
 
             // Write data from the cursor to the screen views
 
@@ -332,9 +337,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             // Create a string for the sharing intent
             mForecastStr = convertCursorRowToUXFormat(cursor);
         }
-        if (mShareActionProvider != null ) {
-            mShareActionProvider.setShareIntent(createShareForecastIntent());
-        }
+//        if (mShareActionProvider != null ) {
+//            mShareActionProvider.setShareIntent(createShareForecastIntent());
+//        }
 
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         Toolbar toolbarView = (Toolbar) getView().findViewById(R.id.toolbar);

@@ -24,14 +24,15 @@
     app:columnCount="2">
 
     <android.support.v4.widget.Space
+        android:layout_height="@dimen/detail_view_padding_vertical"
         app:layout_columnSpan="2"
         app:layout_columnWeight="1"
         app:layout_rowWeight="1" />
 
     <TextView
         android:id="@+id/detail_date_textview"
-        android:layout_marginBottom="@dimen/abc_list_item_padding_horizontal"
-        android:layout_marginTop="@dimen/abc_list_item_padding_horizontal"
+        android:layout_marginTop="@dimen/abc_list_item_padding_vertical"
+        android:layout_marginBottom="@dimen/abc_list_item_padding_vertical"
         android:fontFamily="sans-serif"
         android:gravity="center_horizontal"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
@@ -85,6 +86,7 @@
         tools:text="10" />
 
     <android.support.v4.widget.Space
+        android:layout_height="@dimen/detail_view_padding_vertical"
         app:layout_columnSpan="2"
         app:layout_columnWeight="1"
         app:layout_rowWeight="1" />

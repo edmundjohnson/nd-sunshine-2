@@ -84,11 +84,13 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginTop="?attr/actionBarSize"
-        android:elevation="@dimen/appbar_elevation"
-        app:elevation="@dimen/appbar_elevation"
+        android:layout_marginRight="@dimen/list_item_extra_padding"
+        android:layout_marginEnd="@dimen/list_item_extra_padding"
         android:paddingRight="@dimen/abc_list_item_padding_horizontal"
         android:paddingEnd="@dimen/abc_list_item_padding_horizontal"
-        android:paddingBottom="@dimen/abc_list_item_padding_vertical"
+        android:paddingBottom="@dimen/detail_container_bottom_margin"
+        android:elevation="@dimen/appbar_elevation"
+        app:elevation="@dimen/appbar_elevation"
         />
 
 </RelativeLayout>

@@ -38,7 +38,6 @@ dependencies {
     // required for GCM - don't necessarily use latest version -
     // play-services-gcm:9.4.0 is compatible with com.google.gms:google-services:3.0.0
     compile "com.google.android.gms:play-services-gcm:9.4.0"
-    //compile 'com.google.firebase:firebase-messaging:9.0.0'
 }
 
 // required for GCM - needs to be at end of file

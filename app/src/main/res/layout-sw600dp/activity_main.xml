@@ -74,6 +74,7 @@
         android:layout_alignEnd="@id/layout_center"
         android:layout_alignRight="@id/layout_center"
         android:layout_below="@id/appbar"
+        android:choiceMode="singleChoice"
         tools:layout="@android:layout/list_content"
         />
 

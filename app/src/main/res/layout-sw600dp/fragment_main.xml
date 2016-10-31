@@ -19,12 +19,11 @@
     android:layout_height="match_parent"
     tools:context="com.example.android.sunshine.app.ForecastFragment">
 
-    <ListView
-        style="@style/ForecastListStyle"
+    <android.support.v7.widget.RecyclerView
+        style="@style/ForecastStyle"
         android:id="@+id/recyclerview_forecast"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@null" />
+        android:layout_height="match_parent" />
 
     <!-- empty list -->
     <TextView

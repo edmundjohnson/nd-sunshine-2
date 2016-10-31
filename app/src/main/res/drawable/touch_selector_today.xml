@@ -6,7 +6,7 @@
         android:drawable="@color/primary_light" />
 
     <!-- When the view is "activated".  In SINGLE_CHOICE_MODE, it flags the active row
-         of a ListView -->
+         of a ListView (may not work for RecyclerView?) -->
     <item android:state_activated="true"
         android:drawable="@color/primary_light" />
 

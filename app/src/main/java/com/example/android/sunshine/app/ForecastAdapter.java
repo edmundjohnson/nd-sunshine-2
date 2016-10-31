@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import static com.example.android.sunshine.app.ForecastFragment.COL_WEATHER_DATE;
+
 /**
  * {@link ForecastAdapter} exposes a list of weather forecasts
  * from a {@link android.database.Cursor} to a {@link android.support.v7.widget.RecyclerView}.
@@ -24,19 +26,22 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
     private boolean mUseTodayLayout;
 
-    private Cursor mCursor;
     private Context mContext;
+    private Cursor mCursor;
+    private final ForecastAdapterOnClickHandler mClickHandler;
+    private final View mEmptyListView;
 
     /**
      * Constructor.
      * @param context the context
-     * @param cursor the cursor
-     * @param flags the flags, this parameter is currently not used
+     * @param clickHandler the item click handler
+     * @param emptyListView the view to display if the list is empty
      */
-    public ForecastAdapter(Context context, Cursor cursor, int flags) {
-        //super(context, cursor, flags);
-        mCursor = cursor;
+    public ForecastAdapter(Context context, ForecastAdapterOnClickHandler clickHandler,
+                           View emptyListView) {
         mContext = context;
+        mClickHandler = clickHandler;
+        mEmptyListView = emptyListView;
     }
 
 //    /*
@@ -184,7 +189,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
             view.setFocusable(true);
             return new ForecastAdapterViewHolder(view);
         } else {
-            throw new RuntimeException("Not bound to RecyclerViewSelection");
+            throw new RuntimeException("Not bound to RecyclerView");
         }
     }
 
@@ -239,7 +244,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         }
 
         // Date
-        long dateInMillis = mCursor.getLong(ForecastFragment.COL_WEATHER_DATE);
+        long dateInMillis = mCursor.getLong(COL_WEATHER_DATE);
         viewHolder.mDateView.setText(Utility.getFriendlyDayString(context, dateInMillis));
 
         // Description
@@ -300,12 +305,23 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
     public final void swapCursor(@Nullable final Cursor newCursor) {
         mCursor = newCursor;
         notifyDataSetChanged();
+
+        int visibility = getItemCount() == 0 ? View.VISIBLE : View.GONE;
+        mEmptyListView.setVisibility(visibility);
+    }
+
+    /**
+     * Interface for the item click handler.
+     */
+    public interface ForecastAdapterOnClickHandler {
+        void onClick(long date, ForecastAdapterViewHolder viewHolder);
     }
 
     /**
      * Cache of the children views for a forecast list item.
      */
-    public static class ForecastAdapterViewHolder extends RecyclerView.ViewHolder {
+    public class ForecastAdapterViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener {
         public final ImageView mIconView;
         public final TextView mDateView;
         public final TextView mDescriptionView;
@@ -324,6 +340,18 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
             mDescriptionView = (TextView) view.findViewById(R.id.list_item_forecast_textview);
             mHighTempView = (TextView) view.findViewById(R.id.list_item_high_textview);
             mLowTempView = (TextView) view.findViewById(R.id.list_item_low_textview);
+
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int adapterPosition = getAdapterPosition();
+            mCursor.moveToPosition(adapterPosition);
+
+            long date = mCursor.getLong(COL_WEATHER_DATE);
+            mClickHandler.onClick(date, this);
+
         }
     }
 

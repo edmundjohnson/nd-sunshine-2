@@ -172,33 +172,47 @@ public class ForecastFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
 
-        String locationSetting = Utility.getPreferredLocation(getActivity());
-        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
-                locationSetting, System.currentTimeMillis());
-        // Sort order:  Ascending, by date.
-        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
+//        String locationSetting = Utility.getPreferredLocation(getActivity());
+//        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
+//                locationSetting, System.currentTimeMillis());
+//        // Sort order:  Ascending, by date.
+//        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
 
-        Cursor cur = getActivity().getContentResolver().query(
-                weatherForLocationUri,
-                FORECAST_COLUMNS,
-                null,
-                null,
-                sortOrder);
-
-        // The ForecastAdapter will take data from our cursor and populate the RecyclerView.
-        // We cannot use FLAG_AUTO_REQUERY since it is deprecated, so we will end
-        // up with an empty list the first time we run.
-        mForecastAdapter = new ForecastAdapter(getActivity(), cur, 0);
-        mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
+//        Cursor cur = getActivity().getContentResolver().query(
+//                weatherForLocationUri,
+//                FORECAST_COLUMNS,
+//                null,
+//                null,
+//                sortOrder);
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
+        ForecastAdapter.ForecastAdapterOnClickHandler clickHandler =
+                new ForecastAdapter.ForecastAdapterOnClickHandler() {
+            @Override
+            public void onClick(long date, ForecastAdapter.ForecastAdapterViewHolder viewHolder) {
+                String locationSetting = Utility.getPreferredLocation(getActivity());
+                Uri dateUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, date);
+                ((Callback) getActivity()).onItemSelected(dateUri);
+                // Note: the cursor cannot be closed here - that causes a crash
+                mSelectedPosition = viewHolder.getAdapterPosition();
+            }
+        };
+
+        // The ForecastAdapter will take data from our cursor and populate the RecyclerView.
+        View emptyListView = rootView.findViewById(R.id.recyclerview_forecast_empty);
+
+        mForecastAdapter = new ForecastAdapter(getActivity(), clickHandler, emptyListView);
+        mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
+
         // Get a reference to the RecyclerView, and attach this adapter to it.
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_forecast);
-//        mRecyclerView.setEmptyView(rootView.findViewById(R.id.recyclerview_forecast_empty));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mForecastAdapter);
 
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        mRecyclerView.setHasFixedSize(true);
 
 //        // Create a listener for clicking on the list item.
 //        mRecyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -211,7 +225,8 @@ public class ForecastFragment extends Fragment
 //                    mSelectedPosition = position;
 //                    String locationSetting = Utility.getPreferredLocation(getActivity());
 //                    long date = cursor.getLong(COL_WEATHER_DATE);
-//                    Uri dateUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, date);
+//                    Uri dateUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
+//                                                    locationSetting, date);
 //                    ((Callback) getActivity()).onItemSelected(dateUri);
 //                    // Note: the cursor cannot be closed here - that causes a crash
 //                }
@@ -224,7 +239,7 @@ public class ForecastFragment extends Fragment
         // or magically appeared to take advantage of room, but data or place in the app was never
         // actually *lost*.
         if (savedInstanceState != null && savedInstanceState.containsKey(KEY_POSITION)) {
-            // The recyclerview probably hasn't even been populated yet.
+            // The RecyclerView probably hasn't even been populated yet.
             // Actually perform the swap out in onLoadFinished.
             mSelectedPosition = savedInstanceState.getInt(KEY_POSITION);
         }
@@ -235,7 +250,7 @@ public class ForecastFragment extends Fragment
     @Override
     public void onSaveInstanceState(Bundle outState) {
         // When device rotates, the currently selected list item needs to be saved.
-        // When no item is selected, mPosition will be set to RecyclerView.NO_POSITION,
+        // When no item is selected, mSelectedPosition will be set to RecyclerView.NO_POSITION,
         // so check for that before storing.
         if (mSelectedPosition != RecyclerView.NO_POSITION) {
             outState.putInt(KEY_POSITION, mSelectedPosition);
@@ -365,7 +380,8 @@ public class ForecastFragment extends Fragment
                 if (!Utility.isNetworkConnection(getContext())) {
                     message = getString(R.string.empty_forecast_list_no_network);
                 } else {
-                    @SunshineSyncAdapter.LocationStatus int locationStatus = Utility.getLocationStatus(getContext());
+                    @SunshineSyncAdapter.LocationStatus int locationStatus =
+                                                Utility.getLocationStatus(getContext());
                     switch (locationStatus) {
                         case SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN:
                             message = getString(R.string.empty_forecast_list_server_down);

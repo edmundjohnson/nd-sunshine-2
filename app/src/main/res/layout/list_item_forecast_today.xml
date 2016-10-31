@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/list_item_forecast_layout_today"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:elevation="@dimen/appbar_elevation"
     android:background="@drawable/touch_selector_white"
     app:columnCount="2">

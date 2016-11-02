@@ -43,6 +43,8 @@ import android.widget.TextView;
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
+import static android.R.attr.max;
+import static android.R.attr.translationY;
 import static android.support.v4.app.LoaderManager.LoaderCallbacks;
 
 /**
@@ -92,8 +94,6 @@ public class ForecastFragment extends Fragment
     private RecyclerView mRecyclerView;
     private int mSelectedPosition = RecyclerView.NO_POSITION;
     private boolean mUseTodayLayout;
-
-    private RecyclerView.OnScrollListener mOnScrollListener;
 
     public ForecastFragment() {
     }
@@ -219,39 +219,43 @@ public class ForecastFragment extends Fragment
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
-//        final View parallaxBar = rootView.findViewById(R.id.parallax_bar);
-//        if (null != parallaxBar) {
-//            mOnScrollListener = new RecyclerView.OnScrollListener() {
-//                /**
-//                 * Callback method to be invoked when the RecyclerView has been scrolled. This will be
-//                 * called after the scroll has completed.
-//                 *
-//                 * <p> This callback will also be called if visible item range changes after a layout
-//                 * calculation. In that case, dx and dy will be 0.
-//                 *
-//                 * @param recyclerView The RecyclerView which scrolled.
-//                 * @param dx           The amount of horizontal scroll.
-//                 * @param dy           The amount of vertical scroll.
-//                 */
-//                @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-//                @Override
-//                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                    super.onScrolled(recyclerView, dx, dy);
-//                    int max = parallaxBar.getHeight();
-//
-//                    float parallaxScroll = (dy / 2f) < max ? (dy / 2f) : max;
-//                    float translationY = parallaxBar.getTranslationY();
-//                    parallaxBar.setTranslationY(translationY - parallaxScroll);
-//                }
-//            };
-//
-//
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-//                mRecyclerView.addOnScrollListener(mOnScrollListener);
-//            }
-//        }
+        final View parallaxBar = rootView.findViewById(R.id.parallax_bar);
+        if (null != parallaxBar) {
+            RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+                /**
+                 * Callback method to be invoked when the RecyclerView has been scrolled.
+                 * This will be called after the scroll has completed.
+                 *
+                 * <p> This callback will also be called if visible item range changes after
+                 * a layout calculation. In that case, dx and dy will be 0.
+                 *
+                 * @param recyclerView The RecyclerView which scrolled.
+                 * @param dx           The amount of horizontal scroll.
+                 * @param dy           The amount of vertical scroll.
+                 */
+                @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
 
+                    float translationY = parallaxBar.getTranslationY();
+                    float parallaxScroll;
+                    if (dy > 0) {
+                        // max is calculated each time - inefficient
+                        // max should really be greater than height; it should include the shadow
+                        int max = parallaxBar.getHeight();
+                        parallaxScroll = Math.max(-max, translationY - (dy / 2));
+                    } else {
+                        parallaxScroll = Math.min(0, translationY - (dy / 2));
+                    }
+                    parallaxBar.setTranslationY(parallaxScroll);
+                }
+            };
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                mRecyclerView.addOnScrollListener(mOnScrollListener);
+            }
+        }
 
 //        // Create a listener for clicking on the list item.
 //        mRecyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -325,10 +329,15 @@ public class ForecastFragment extends Fragment
         getLoaderManager().initLoader(FORECAST_LOADER_ID, bundle, this);
     }
 
+    /**
+     * Called when the fragment is destroyed.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mRecyclerView.removeOnScrollListener(mOnScrollListener);
+        if (mRecyclerView != null) {
+            mRecyclerView.clearOnScrollListeners();
+        }
     }
 
     /**

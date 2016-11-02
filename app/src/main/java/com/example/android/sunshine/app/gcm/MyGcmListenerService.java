@@ -1,5 +1,8 @@
 package com.example.android.sunshine.app.gcm;
 
+// For some reason, checkstyle wants this import statement here!
+import com.google.android.gms.gcm.GcmListenerService;
+
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -13,10 +16,6 @@ import android.widget.Toast;
 
 import com.example.android.sunshine.app.MainActivity;
 import com.example.android.sunshine.app.R;
-import com.google.android.gms.gcm.GcmListenerService;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * This service handles messages captured by the GcmReceiver.
@@ -30,7 +29,7 @@ public class MyGcmListenerService extends GcmListenerService {
     private static final String EXTRA_WEATHER = "weather";
     private static final String EXTRA_LOCATION = "location";
 
-    public static final int NOTIFICATION_ID = 1;
+    private static final int NOTIFICATION_ID = 1;
 
     /**
      * Called when a message is received.
@@ -51,20 +50,16 @@ public class MyGcmListenerService extends GcmListenerService {
             }
             // Check that the message is coming from the server.
             if (senderId.equals(from)) {
-//                try {
-                    // Process message and then post a notification of the received message.
-                    //JSONObject jsonObject = new JSONObject(data.getString(EXTRA_DATA));
-                    //String weather = jsonObject.getString(EXTRA_WEATHER);
-                    //String location = jsonObject.getString(EXTRA_LOCATION);
-                    String weather = data.getString(EXTRA_WEATHER);
-                    String location = data.getString(EXTRA_LOCATION);
-                    String alert = String.format(
-                            getString(R.string.gcm_weather_alert), weather, location);
+                // Process message and then post a notification of the received message.
+                //JSONObject jsonObject = new JSONObject(data.getString(EXTRA_DATA));
+                //String weather = jsonObject.getString(EXTRA_WEATHER);
+                //String location = jsonObject.getString(EXTRA_LOCATION);
+                String weather = data.getString(EXTRA_WEATHER);
+                String location = data.getString(EXTRA_LOCATION);
+                String alert = String.format(
+                        getString(R.string.gcm_weather_alert), weather, location);
 
-                    sendNotification(alert);
-//                } catch (JSONException e) {
-//                    // do nothing, as processing this message is not one of our critical features
-//                }
+                sendNotification(alert);
             }
         }
     }

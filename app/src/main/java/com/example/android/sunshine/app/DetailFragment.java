@@ -354,28 +354,30 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 //        }
 
         AppCompatActivity activity = (AppCompatActivity) getActivity();
-        Toolbar toolbarView = (Toolbar) getView().findViewById(R.id.toolbar);
+        if (getView() != null) {
+            Toolbar toolbarView = (Toolbar) getView().findViewById(R.id.toolbar);
 
-        // We need to start the enter transition after the data has loaded
-        if (activity instanceof DetailActivity) {
-            activity.supportStartPostponedEnterTransition();
+            // We need to start the enter transition after the data has loaded
+            if (activity instanceof DetailActivity) {
+                activity.supportStartPostponedEnterTransition();
 
-            if ( null != toolbarView ) {
-                activity.setSupportActionBar(toolbarView);
-                ActionBar actionBar = activity.getSupportActionBar();
-                if (actionBar != null) {
-                    actionBar.setDisplayShowTitleEnabled(false);
-                    actionBar.setDisplayHomeAsUpEnabled(true);
+                if ( null != toolbarView ) {
+                    activity.setSupportActionBar(toolbarView);
+                    ActionBar actionBar = activity.getSupportActionBar();
+                    if (actionBar != null) {
+                        actionBar.setDisplayShowTitleEnabled(false);
+                        actionBar.setDisplayHomeAsUpEnabled(true);
+                    }
                 }
-            }
-        } else {
-            if (null != toolbarView) {
-                Menu menu = toolbarView.getMenu();
-                if (null != menu) {
-                    menu.clear();
+            } else {
+                if (null != toolbarView) {
+                    Menu menu = toolbarView.getMenu();
+                    if (null != menu) {
+                        menu.clear();
+                    }
+                    toolbarView.inflateMenu(R.menu.detailfragment);
+                    finishCreatingMenu(toolbarView.getMenu());
                 }
-                toolbarView.inflateMenu(R.menu.detailfragment);
-                finishCreatingMenu(toolbarView.getMenu());
             }
         }
     }

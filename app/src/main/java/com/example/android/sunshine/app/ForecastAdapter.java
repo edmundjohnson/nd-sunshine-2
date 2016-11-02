@@ -26,7 +26,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
     private boolean mUseTodayLayout;
 
-    private Context mContext;
+    private final Context mContext;
     private Cursor mCursor;
     private final ForecastAdapterOnClickHandler mClickHandler;
     private final View mEmptyListView;
@@ -248,8 +248,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         viewHolder.mDateView.setText(Utility.getFriendlyDayString(context, dateInMillis));
 
         // Description
-        // TO DO: Use the weather id to get the description, so it can be internationalised
-//        String description = cursor.getString(ForecastFragment.COL_WEATHER_DESC);
+        // Use the weather id to get the description, so it can be internationalised
         String description = Utility.getStringForWeatherCondition(context, weatherId);
         viewHolder.mDescriptionView.setText(description);
         // for accessibility, add a content description

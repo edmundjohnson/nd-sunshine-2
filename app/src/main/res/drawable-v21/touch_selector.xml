@@ -18,7 +18,6 @@
     <item android:state_activated="true"
         android:drawable="@color/activated"/>
 
-    <!-- Default, "just hangin' out" state. The base state also
-         implements the ripple effect. -->
+    <!-- Default, "just hanging out" state. The base state also implements the ripple effect. -->
     <item android:drawable="@drawable/touch_selector_base" />
 </selector>

@@ -82,7 +82,7 @@
             android:layout_width="@dimen/forecast_text_width"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="right"
+            android:gravity="end"
             android:fontFamily="sans-serif-light"
             android:textColor="@color/forecast_low_text"
             android:textSize="@dimen/forecast_text_size"/>

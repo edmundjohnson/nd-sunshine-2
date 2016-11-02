@@ -15,11 +15,13 @@
  */
 package com.example.android.sunshine.app;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -90,6 +92,8 @@ public class ForecastFragment extends Fragment
     private RecyclerView mRecyclerView;
     private int mSelectedPosition = RecyclerView.NO_POSITION;
     private boolean mUseTodayLayout;
+
+    private RecyclerView.OnScrollListener mOnScrollListener;
 
     public ForecastFragment() {
     }
@@ -192,7 +196,8 @@ public class ForecastFragment extends Fragment
             @Override
             public void onClick(long date, ForecastAdapter.ForecastAdapterViewHolder viewHolder) {
                 String locationSetting = Utility.getPreferredLocation(getActivity());
-                Uri dateUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, date);
+                Uri dateUri =
+                        WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, date);
                 ((Callback) getActivity()).onItemSelected(dateUri);
                 // Note: the cursor cannot be closed here - that causes a crash
                 mSelectedPosition = viewHolder.getAdapterPosition();
@@ -213,6 +218,40 @@ public class ForecastFragment extends Fragment
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
+
+//        final View parallaxBar = rootView.findViewById(R.id.parallax_bar);
+//        if (null != parallaxBar) {
+//            mOnScrollListener = new RecyclerView.OnScrollListener() {
+//                /**
+//                 * Callback method to be invoked when the RecyclerView has been scrolled. This will be
+//                 * called after the scroll has completed.
+//                 *
+//                 * <p> This callback will also be called if visible item range changes after a layout
+//                 * calculation. In that case, dx and dy will be 0.
+//                 *
+//                 * @param recyclerView The RecyclerView which scrolled.
+//                 * @param dx           The amount of horizontal scroll.
+//                 * @param dy           The amount of vertical scroll.
+//                 */
+//                @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+//                @Override
+//                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                    super.onScrolled(recyclerView, dx, dy);
+//                    int max = parallaxBar.getHeight();
+//
+//                    float parallaxScroll = (dy / 2f) < max ? (dy / 2f) : max;
+//                    float translationY = parallaxBar.getTranslationY();
+//                    parallaxBar.setTranslationY(translationY - parallaxScroll);
+//                }
+//            };
+//
+//
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+//                mRecyclerView.addOnScrollListener(mOnScrollListener);
+//            }
+//        }
+
+
 
 //        // Create a listener for clicking on the list item.
 //        mRecyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -284,6 +323,12 @@ public class ForecastFragment extends Fragment
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
         getLoaderManager().initLoader(FORECAST_LOADER_ID, bundle, this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mRecyclerView.removeOnScrollListener(mOnScrollListener);
     }
 
     /**

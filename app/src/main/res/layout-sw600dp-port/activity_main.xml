@@ -27,7 +27,6 @@
         android:background="@color/primary"
         android:contentDescription="@string/app_name"
         android:elevation="@dimen/appbar_elevation"
-        app:elevation="@dimen/appbar_elevation"
         />
 
     <View
@@ -36,8 +35,7 @@
         android:layout_below="@id/logo_image_view"
         android:background="@color/primary"
         android:elevation="@dimen/appbar_elevation"
-        app:elevation="@dimen/appbar_elevation">
-    </View>
+        />
 
     <android.support.v7.widget.CardView
         android:id="@+id/weather_detail_container"

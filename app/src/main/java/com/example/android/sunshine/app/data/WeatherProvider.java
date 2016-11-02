@@ -55,12 +55,12 @@ public class WeatherProvider extends ContentProvider {
         //This is an inner join which looks like
         //weather INNER JOIN location ON weather.location_id = location._id
         sWeatherByLocationSettingQueryBuilder.setTables(
-                WeatherContract.WeatherEntry.TABLE_NAME + " INNER JOIN " +
-                        WeatherContract.LocationEntry.TABLE_NAME +
-                        " ON " + WeatherContract.WeatherEntry.TABLE_NAME +
-                        "." + WeatherContract.WeatherEntry.COLUMN_LOC_KEY +
-                        " = " + WeatherContract.LocationEntry.TABLE_NAME +
-                        "." + WeatherContract.LocationEntry._ID);
+                WeatherContract.WeatherEntry.TABLE_NAME + " INNER JOIN "
+                        + WeatherContract.LocationEntry.TABLE_NAME
+                        + " ON " + WeatherContract.WeatherEntry.TABLE_NAME
+                        + "." + WeatherContract.WeatherEntry.COLUMN_LOC_KEY
+                        + " = " + WeatherContract.LocationEntry.TABLE_NAME
+                        + "." + WeatherContract.LocationEntry._ID);
 
         sLocationQueryBuilder = new SQLiteQueryBuilder();
 
@@ -73,20 +73,20 @@ public class WeatherProvider extends ContentProvider {
 
     //location.location_setting = ?
     private static final String sLocationSettingSelection =
-            WeatherContract.LocationEntry.TABLE_NAME +
-                    "." + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? ";
+            WeatherContract.LocationEntry.TABLE_NAME + "."
+                    + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? ";
 
     //location.location_setting = ? AND date >= ?
     private static final String sLocationSettingWithStartDateSelection =
-            WeatherContract.LocationEntry.TABLE_NAME +
-                    "." + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? AND " +
-                    WeatherContract.WeatherEntry.COLUMN_DATE + " >= ? ";
+            WeatherContract.LocationEntry.TABLE_NAME + "."
+                    + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? AND "
+                    + WeatherContract.WeatherEntry.COLUMN_DATE + " >= ? ";
 
     //location.location_setting = ? AND date = ?
     private static final String sLocationSettingAndDaySelection =
-            WeatherContract.LocationEntry.TABLE_NAME +
-                    "." + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? AND " +
-                    WeatherContract.WeatherEntry.COLUMN_DATE + " = ? ";
+            WeatherContract.LocationEntry.TABLE_NAME + "."
+                    + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? AND "
+                    + WeatherContract.WeatherEntry.COLUMN_DATE + " = ? ";
 
 
     private Cursor getWeatherByLocationSetting(Uri uri, String[] projection, String sortOrder) {
@@ -343,11 +343,13 @@ public class WeatherProvider extends ContentProvider {
         // is null.
         switch (match) {
             case WEATHER: {
-                rowsUpdated = db.update(WeatherContract.WeatherEntry.TABLE_NAME, values, selection, selectionArgs);
+                rowsUpdated = db.update(WeatherContract.WeatherEntry.TABLE_NAME, values,
+                                            selection, selectionArgs);
                 break;
             }
             case LOCATION: {
-                rowsUpdated = db.update(WeatherContract.LocationEntry.TABLE_NAME, values, selection, selectionArgs);
+                rowsUpdated = db.update(WeatherContract.LocationEntry.TABLE_NAME, values,
+                                            selection, selectionArgs);
                 break;
             }
             default:

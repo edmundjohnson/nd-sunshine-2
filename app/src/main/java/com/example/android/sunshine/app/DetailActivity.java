@@ -18,7 +18,11 @@ package com.example.android.sunshine.app;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 
+/**
+ * Activity for the detail screen.
+ */
 public class DetailActivity extends AppCompatActivity {
 
     @Override
@@ -52,20 +56,24 @@ public class DetailActivity extends AppCompatActivity {
 //        return true;
 //    }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            startActivity(new Intent(this, SettingsActivity.class));
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
+    /**
+     * Handle action bar item clicks here. The action bar will automatically handle clicks
+     * on the Home/Up button, so long as a parent activity is specified in AndroidManifest.xml.
+     * However, we override the default behaviour to perform the return transition.
+     * @param item the menu item which was clicked.
+     * @return false to allow normal menu processing to proceed, true to consume it here
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        // Handle the Up arrow
+        if (item.getItemId() == android.R.id.home) {
+            // perform the return transition
+            supportFinishAfterTransition();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
 }

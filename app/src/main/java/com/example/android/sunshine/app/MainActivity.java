@@ -25,6 +25,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -34,6 +36,7 @@ import android.view.MenuItem;
 
 import com.example.android.sunshine.app.gcm.RegistrationIntentService;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
+
 
 /**
  * The main activity which is displayed when the app is invoked.
@@ -196,7 +199,12 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
         } else {
             // Launch detail activity
             Intent intent = new Intent(this, DetailActivity.class).setData(contentUri);
-            startActivity(intent);
+            //startActivity(intent);
+
+            @SuppressWarnings("unchecked")
+            ActivityOptionsCompat activityOptions =
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(this);
+            ActivityCompat.startActivity(this, intent, activityOptions.toBundle());
         }
     }
 

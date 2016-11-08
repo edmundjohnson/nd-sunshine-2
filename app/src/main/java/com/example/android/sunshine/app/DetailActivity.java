@@ -41,11 +41,15 @@ public class DetailActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             Bundle args = new Bundle();
             args.putParcelable(DetailFragment.DETAIL_URI, getIntent().getData());
+            args.putBoolean(DetailFragment.DETAIL_TRANSITION_ANIMATION, true);
             DetailFragment detailFragment = new DetailFragment();
             detailFragment.setArguments(args);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.weather_detail_container, detailFragment)
                     .commit();
+
+            // Being in the detail activity means we are in animation mode.
+            supportPostponeEnterTransition();
         }
     }
 

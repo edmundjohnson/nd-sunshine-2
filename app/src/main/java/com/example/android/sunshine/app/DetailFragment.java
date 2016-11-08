@@ -34,6 +34,12 @@ import com.example.android.sunshine.app.data.WeatherContract;
  */
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    // arguments passed into this fragment
+    static final String DETAIL_URI = "DETAIL_URI";
+    static final String DETAIL_TRANSITION_ANIMATION = "DETAIL_TRANSITION_ANIMATION";
+
+    private static final String LOG_TAG = DetailFragment.class.getSimpleName();
+
     private static final String[] DETAIL_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
             // the content provider joins the location & weather tables in the background
@@ -66,16 +72,13 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private static final int COL_PRESSURE = 8;
     private static final int COL_WEATHER_CONDITION_ID = 9;
 
-    static final String DETAIL_URI = "DETAIL_URI";
-
-    private static final String LOG_TAG = DetailFragment.class.getSimpleName();
-
     private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
 
     private static final int DETAIL_LOADER = 2;
 
     private Uri mForecastUri;
     private String mForecastStr = "";
+    private boolean mTransitionAnimation;
 
 //    private ShareActionProvider mShareActionProvider;
 
@@ -122,6 +125,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         Bundle args = getArguments();
         if (args != null) {
             mForecastUri = args.getParcelable(DETAIL_URI);
+            mTransitionAnimation = args.getBoolean(DETAIL_TRANSITION_ANIMATION);
         }
 
         View rootView = inflater.inflate(R.layout.fragment_detail_start, container, false);
@@ -358,10 +362,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             Toolbar toolbarView = (Toolbar) getView().findViewById(R.id.toolbar);
 
             // We need to start the enter transition after the data has loaded
-            if (activity instanceof DetailActivity) {
+            if (mTransitionAnimation) {
                 activity.supportStartPostponedEnterTransition();
 
-                if ( null != toolbarView ) {
+                if (null != toolbarView) {
                     activity.setSupportActionBar(toolbarView);
                     ActionBar actionBar = activity.getSupportActionBar();
                     if (actionBar != null) {

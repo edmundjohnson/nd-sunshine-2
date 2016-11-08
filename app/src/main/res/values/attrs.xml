@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <declare-styleable name="LocationEditTextPreference">
         <attr name="minLength" format="integer"/>
     </declare-styleable>
+
+    <!-- each attribute declared here can be passed to the fragment as an argument,
+         and used in the layout -->
+    <declare-styleable name="ForecastFragment">
+        <attr name="sharedElementTransitions" format="boolean" />
+    </declare-styleable>
+
 </resources>

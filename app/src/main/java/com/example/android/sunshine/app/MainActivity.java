@@ -27,12 +27,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.android.sunshine.app.gcm.RegistrationIntentService;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
@@ -184,13 +186,16 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
     /**
      * DetailFragmentCallback for when an item has been selected.
      * @param contentUri the date of the selected list item
+     * @param viewHolder the view holder of the selected item
      */
     @Override
-    public void onItemSelected(Uri contentUri) {
+    public void onItemSelected(Uri contentUri, ForecastAdapter.ForecastAdapterViewHolder viewHolder) {
         if (mTwoPane) {
             // Replace detail fragment
             Bundle args = new Bundle();
             args.putParcelable(DetailFragment.DETAIL_URI, contentUri);
+            // default is false?
+            //args.putBoolean(DetailFragment.DETAIL_TRANSITION_ANIMATION, false);
             DetailFragment detailFragment = new DetailFragment();
             detailFragment.setArguments(args);
             getSupportFragmentManager().beginTransaction()
@@ -201,9 +206,12 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
             Intent intent = new Intent(this, DetailActivity.class).setData(contentUri);
             //startActivity(intent);
 
+            String transitionName = getString(R.string.detail_icon_transition_name);
+
             @SuppressWarnings("unchecked")
             ActivityOptionsCompat activityOptions =
-                    ActivityOptionsCompat.makeSceneTransitionAnimation(this);
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(this,
+                            new Pair<View, String>(viewHolder.mIconView, transitionName));
             ActivityCompat.startActivity(this, intent, activityOptions.toBundle());
         }
     }

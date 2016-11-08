@@ -3,6 +3,7 @@ package com.example.android.sunshine.app;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -145,6 +146,10 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         this.mUseTodayLayout = useTodayLayout;
     }
 
+//    public int getSelectedItemPosition() {
+//        return getCursor().getPosition();
+//    }
+
     @Override
     public int getItemViewType(int position) {
         return (position == 0 && mUseTodayLayout) ? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE_DAY;
@@ -277,6 +282,11 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         // for accessibility, add a content description
         viewHolder.mLowTempView.setContentDescription(
                 context.getString(R.string.a11y_low_temp, lowTempString));
+
+        // Give each animated view a unique transition name. The Android animator can use
+        // this to re-find the original view on the return transition.
+        // This enables the animation to happen even when state is lost due to a device rotation.
+        ViewCompat.setTransitionName(viewHolder.mIconView, "iconView" + position);
     }
 
     /**
@@ -308,6 +318,17 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         int visibility = getItemCount() == 0 ? View.VISIBLE : View.GONE;
         mEmptyListView.setVisibility(visibility);
     }
+
+//    /**
+//     * Programmatically click on a view holder.
+//     * @param viewHolder the view holder
+//     */
+//    public void selectView(RecyclerView.ViewHolder viewHolder) {
+//        if (viewHolder instanceof ForecastAdapterViewHolder) {
+//            ForecastAdapterViewHolder vfh = (ForecastAdapterViewHolder) viewHolder;
+//            vfh.onClick(vfh.itemView);
+//        }
+//    }
 
     /**
      * Interface for the item click handler.

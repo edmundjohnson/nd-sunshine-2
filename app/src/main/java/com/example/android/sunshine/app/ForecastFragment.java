@@ -19,6 +19,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -30,6 +31,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,14 +39,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
-import static android.R.attr.max;
-import static android.R.attr.translationY;
 import static android.support.v4.app.LoaderManager.LoaderCallbacks;
 
 /**
@@ -94,6 +95,7 @@ public class ForecastFragment extends Fragment
     private RecyclerView mRecyclerView;
     private int mSelectedPosition = RecyclerView.NO_POSITION;
     private boolean mUseTodayLayout;
+    private boolean mHoldForTransition;
 
     public ForecastFragment() {
     }
@@ -173,6 +175,14 @@ public class ForecastFragment extends Fragment
     }
 
     @Override
+    public void onInflate(Context context, AttributeSet attrs, Bundle savedInstanceState) {
+        super.onInflate(context, attrs, savedInstanceState);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ForecastFragment, 0, 0);
+        mHoldForTransition = a.getBoolean(R.styleable.ForecastFragment_sharedElementTransitions, false);
+        a.recycle();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
 
@@ -198,7 +208,7 @@ public class ForecastFragment extends Fragment
                 String locationSetting = Utility.getPreferredLocation(getActivity());
                 Uri dateUri =
                         WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, date);
-                ((Callback) getActivity()).onItemSelected(dateUri);
+                ((Callback) getActivity()).onItemSelected(dateUri, viewHolder);
                 // Note: the cursor cannot be closed here - that causes a crash
                 mSelectedPosition = viewHolder.getAdapterPosition();
             }
@@ -226,7 +236,7 @@ public class ForecastFragment extends Fragment
                  * Callback method to be invoked when the RecyclerView has been scrolled.
                  * This will be called after the scroll has completed.
                  *
-                 * <p> This callback will also be called if visible item range changes after
+                 * <p>This callback will also be called if visible item range changes after
                  * a layout calculation. In that case, dx and dy will be 0.
                  *
                  * @param recyclerView The RecyclerView which scrolled.
@@ -324,9 +334,15 @@ public class ForecastFragment extends Fragment
     }
 
     @Override
-    public void onActivityCreated(Bundle bundle) {
-        super.onActivityCreated(bundle);
-        getLoaderManager().initLoader(FORECAST_LOADER_ID, bundle, this);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        // We hold for transition here in case the activity
+        // needs to be re-created. In a standard return transition,
+        // this doesn't actually make a difference.
+        if (mHoldForTransition) {
+            getActivity().supportPostponeEnterTransition();
+        }
+        getLoaderManager().initLoader(FORECAST_LOADER_ID, savedInstanceState, this);
+        super.onActivityCreated(savedInstanceState);
     }
 
     /**
@@ -424,6 +440,32 @@ public class ForecastFragment extends Fragment
             //((LinearLayout) mRecyclerView.getItemAtPosition(mSelectedPosition)).setActivated(true);
         }
         updateEmptyView();
+
+        if (cursor.getCount() == 0) {
+            getActivity().supportStartPostponedEnterTransition();
+        } else {
+           // addOnPreDrawListener is called when the RecyclerView has finished laying out its children
+            mRecyclerView.getViewTreeObserver().addOnPreDrawListener(
+                    new ViewTreeObserver.OnPreDrawListener() {
+                        @Override
+                        public boolean onPreDraw() {
+                            // Since we know we're going to get items, we keep the listener around until
+                            // we see Children.
+                            if (mRecyclerView.getChildCount() > 0) {
+                                mRecyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
+                                //int itemPosition = mForecastAdapter.getSelectedItemPosition();
+                                //if (RecyclerView.NO_POSITION == itemPosition ) { itemPosition = 0; }
+                                //RecyclerView.ViewHolder vh =
+                                //          mRecyclerView.findViewHolderForAdapterPosition(itemPosition);
+                                if (mHoldForTransition) {
+                                    getActivity().supportStartPostponedEnterTransition();
+                                }
+                                return true;
+                            }
+                            return false;
+                        }
+                });
+        }
     }
 
     private void updateEmptyView() {
@@ -510,8 +552,10 @@ public class ForecastFragment extends Fragment
     public interface Callback {
         /**
          * DetailFragmentCallback for when an item has been selected.
+         * @param contentUri the date of the selected list item
+         * @param viewHolder the view holder of the selected item
          */
-        void onItemSelected(Uri dateUri);
+        void onItemSelected(Uri contentUri, ForecastAdapter.ForecastAdapterViewHolder viewHolder);
     }
 
 }

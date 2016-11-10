@@ -45,7 +45,7 @@ import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
  */
 public class MainActivity extends AppCompatActivity implements ForecastFragment.Callback {
     /** Log tag for this class. */
-    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = "MainActivity";
 
     private static final String DETAIL_FRAGMENT_TAG = "DETAIL_FRAGMENT_TAG";
 
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
             if (apiAvailability.isUserResolvableError(resultCode)) {
                 apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
             } else {
-                Log.i(LOG_TAG, "This service is not supported");
+                Log.i(TAG, "checkPlayServices: This service is not supported");
                 finish();
             }
             return false;

@@ -38,7 +38,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     static final String DETAIL_URI = "DETAIL_URI";
     static final String DETAIL_TRANSITION_ANIMATION = "DETAIL_TRANSITION_ANIMATION";
 
-    private static final String LOG_TAG = DetailFragment.class.getSimpleName();
+    /** Log tag for this class. */
+    private static final String TAG = "DetailFragment";
 
     private static final String[] DETAIL_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
@@ -168,7 +169,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 //        if (mShareActionProvider != null ) {
 //            mShareActionProvider.setShareIntent(createShareForecastIntent());
 //        } else {
-//            Log.d(LOG_TAG, "Share Action Provider is null");
+//            Log.d(TAG, "Share Action Provider is null");
 //        }
 
 
@@ -195,7 +196,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
      */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.v(LOG_TAG, "In onCreateLoader");
+        Log.d(TAG, "onCreateLoader() called with: id = [" + id + "], args = [" + args + "]");
 
         if (null != mForecastUri) {
             // Now create and return a CursorLoader that will take care of

@@ -27,7 +27,8 @@ import com.example.android.sunshine.app.data.WeatherContract.WeatherEntry;
  * Manages a local database for weather data.
  */
 public class WeatherDbHelper extends SQLiteOpenHelper {
-    private static final String LOG_TAG = WeatherDbHelper.class.getSimpleName();
+    /** Log tag for this class. */
+    private static final String TAG = "WeatherDbHelper";
 
     // If you change the database schema, you must increment the database version.
     private static final int DATABASE_VERSION = 2;
@@ -82,7 +83,7 @@ public class WeatherDbHelper extends SQLiteOpenHelper {
                 // create UNIQUE constraint with REPLACE strategy
                 + " UNIQUE (" + LocationEntry.COLUMN_COORD_LAT + ", "
                 + LocationEntry.COLUMN_COORD_LONG + ") ON CONFLICT REPLACE);";
-        Log.d(LOG_TAG, "SQL_CREATE_LOCATION_TABLE = " + SQL_CREATE_LOCATION_TABLE);
+        Log.d(TAG, "onCreate: SQL_CREATE_LOCATION_TABLE = " + SQL_CREATE_LOCATION_TABLE);
 
 
         sqLiteDatabase.execSQL(SQL_CREATE_WEATHER_TABLE);

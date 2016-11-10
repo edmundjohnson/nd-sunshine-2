@@ -22,8 +22,8 @@ import com.example.android.sunshine.app.R;
  * @author Edmund Johnson
  */
 public class MyGcmListenerService extends GcmListenerService {
-    /** Tag for this class. */
-    private static final String TAG = MyGcmListenerService.class.getSimpleName();
+    /** Log tag for this class. */
+    private static final String TAG = "MyGcmListenerService";
 
     private static final String EXTRA_DATA = "data";
     private static final String EXTRA_WEATHER = "weather";
@@ -41,7 +41,7 @@ public class MyGcmListenerService extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, Bundle data) {
         if (!data.isEmpty()) {
-            Log.d(TAG, "Message received: " + data.toString());
+            Log.d(TAG, "onMessageReceived: Message received: " + data.toString());
 
             // TODO: gcm_default sender ID comes from the API console
             String senderId = getString(R.string.gcm_defaultSenderId);

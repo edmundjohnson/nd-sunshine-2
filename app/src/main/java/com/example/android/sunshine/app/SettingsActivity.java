@@ -41,7 +41,8 @@ import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 public class SettingsActivity extends PreferenceActivity
         implements Preference.OnPreferenceChangeListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private static final String LOG_TAG = SettingsActivity.class.getSimpleName();
+    /** Log tag for this class. */
+    private static final String TAG = "SettingsActivity";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,7 +59,7 @@ public class SettingsActivity extends PreferenceActivity
 
         LocationEditTextPreference locationEditTextPreference = (LocationEditTextPreference)
                 findPreference(getString(R.string.pref_location_key));
-        Log.d(LOG_TAG, "Min length = " + locationEditTextPreference.getMinLength());
+        Log.d(TAG, "onCreate: Min length = " + locationEditTextPreference.getMinLength());
     }
 
     @Override

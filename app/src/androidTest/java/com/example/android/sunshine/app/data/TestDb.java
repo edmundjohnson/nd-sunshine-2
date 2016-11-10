@@ -23,8 +23,8 @@ import android.test.AndroidTestCase;
 import java.util.HashSet;
 
 public class TestDb extends AndroidTestCase {
-    /** Log tag for this class. */
-    //private static final String LOG_TAG = TestDb.class.getSimpleName();
+    ///** Log tag for this class. */
+    //private static final String TAG = "TestDb";
 
     // Since we want each test to start with a clean slate
     private void deleteTheDatabase() {

@@ -17,8 +17,8 @@ import com.example.android.sunshine.app.R;
  * @author Edmund Johnson
  */
 public class RegistrationIntentService extends IntentService {
-    /** Tag for this class. */
-    private static final String TAG = RegistrationIntentService.class.getSimpleName();
+    /** Log tag for this class. */
+    private static final String TAG = "RegistrationIntentSrv";
 
     public RegistrationIntentService() {
         super(TAG);
@@ -55,7 +55,7 @@ public class RegistrationIntentService extends IntentService {
                         putBoolean(MainActivity.SENT_TOKEN_TO_SERVER, true).apply();
             }
         } catch (Exception e) {
-            Log.d(TAG, "Failed to complete token refresh");
+            Log.w(TAG, "onHandleIntent: Failed to complete token refresh", e);
 
             sharedPreferences.edit().
                     putBoolean(MainActivity.SENT_TOKEN_TO_SERVER, false).apply();
@@ -70,7 +70,7 @@ public class RegistrationIntentService extends IntentService {
      * @param token the new token
      */
     private void sendRegistrationToServer(String token) {
-        Log.i(TAG, "GCM Registration Token: " + token);
+        Log.i(TAG, "sendRegistrationToServer: GCM Registration Token: " + token);
     }
 
 }

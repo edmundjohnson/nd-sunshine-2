@@ -33,7 +33,7 @@ import java.util.Vector;
 @Deprecated
 public class SunshineService extends IntentService {
     /** Log tag for this class. */
-    private static final String LOG_TAG = SunshineService.class.getSimpleName();
+    private static final String TAG = "SunshineService";
 
     private static final String LOCATION_QUERY_EXTRA = "lqe";
 
@@ -122,9 +122,9 @@ public class SunshineService extends IntentService {
             getWeatherDataFromJson(forecastJsonStr, locationQuery);
 
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error ", e);
-            // If the code didn't successfully get the weather data, there's no point in attempting
-            // to parse it.
+            Log.e(TAG, "fetchWeather: ", e);
+            // If the code didn't successfully get the weather data, there's no point
+            // attempting to parse it.
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -133,7 +133,7 @@ public class SunshineService extends IntentService {
                 try {
                     reader.close();
                 } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream", e);
+                    Log.e(TAG, "fetchWeather: Error closing stream", e);
                 }
             }
         }
@@ -280,11 +280,11 @@ public class SunshineService extends IntentService {
                 );
             }
 
-            Log.d(LOG_TAG, "getWeatherDataFromJson() complete. " + inserted + " Inserted");
+            Log.d(TAG, "getWeatherDataFromJson: complete. " + inserted + " Inserted");
 
         } catch (JSONException e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
-            e.printStackTrace();
+            Log.e(TAG, "getWeatherDataFromJson: ", e);
+            //e.printStackTrace();
         }
     }
 

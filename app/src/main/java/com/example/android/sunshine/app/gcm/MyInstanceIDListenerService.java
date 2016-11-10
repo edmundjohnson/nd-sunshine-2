@@ -9,8 +9,8 @@ import android.content.Intent;
  * @author Edmund Johnson
  */
 public class MyInstanceIDListenerService extends InstanceIDListenerService {
-//    /** Tag for this class. */
-//    private static final String TAG = MyInstanceIDListenerService.class.getSimpleName();
+    ///** Log tag for this class. */
+    //private static final String TAG = "MyInstanceIDListenerService";
 
     /**
      * This method is called if InstanceID token is updated. This may occur if the security

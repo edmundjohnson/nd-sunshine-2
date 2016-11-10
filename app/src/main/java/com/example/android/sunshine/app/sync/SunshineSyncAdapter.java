@@ -52,7 +52,8 @@ import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
 public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
-    private static final String LOG_TAG = SunshineSyncAdapter.class.getSimpleName();
+    /** Log tag for this class. */
+    private static final String TAG = "SunshineSyncAdapter";
 
     // Interval at which to sync with the weather, in seconds.
     // 60 seconds (1 minute) * 180 = 3 hours
@@ -99,7 +100,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority,
                               ContentProviderClient provider, SyncResult syncResult) {
-        Log.d(LOG_TAG, "onPerformSync Called.");
+        Log.d(TAG, "onPerformSync: Called.");
 
         String locationQuery = Utility.getPreferredLocation(getContext());
 
@@ -138,7 +139,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
             URL url = new URL(builtUri.toString());
 
-            Log.d(LOG_TAG, "URL = " + url.toString());
+            Log.d(TAG, "onPerformSync: URL = " + url.toString());
 
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -175,7 +176,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             notifyWeather();
 
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error ", e);
+            Log.e(TAG, "onPerformSync: ", e);
             setLocationStatus(getContext(), LOCATION_STATUS_SERVER_DOWN);
             // If the code didn't successfully get the weather data, there's no point
             // in attempting to parse it.
@@ -187,7 +188,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 try {
                     reader.close();
                 } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream", e);
+                    Log.e(TAG, "onPerformSync: Error closing stream", e);
                 }
             }
         }
@@ -290,7 +291,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             // e.g. { "message" : "", "cod" : "404" }
             if (forecastJson.has(OWM_MESSAGE_CODE)) {
                 int responseCode = forecastJson.getInt(OWM_MESSAGE_CODE);
-                Log.d(LOG_TAG, "getWeatherDataFromJson(): response code is " + responseCode);
+                Log.d(TAG, "getWeatherDataFromJson: response code is " + responseCode);
                 switch (responseCode) {
                     case HttpURLConnection.HTTP_OK:
                         break;
@@ -405,13 +406,13 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                         new String[]{ Long.toString(dayTime.setJulianDay(julianStartDay - 1)) });
             }
 
-            Log.d(LOG_TAG, "getWeatherDataFromJson() complete. " + inserted + " Inserted");
+            Log.d(TAG, "getWeatherDataFromJson: complete. " + inserted + " Inserted");
             setLocationStatus(getContext(), LOCATION_STATUS_OK);
 
         } catch (JSONException e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
+            Log.e(TAG, "getWeatherDataFromJson: ", e);
             setLocationStatus(getContext(), LOCATION_STATUS_SERVER_INVALID);
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 

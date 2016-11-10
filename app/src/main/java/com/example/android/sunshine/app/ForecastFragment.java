@@ -53,8 +53,8 @@ import static android.support.v4.app.LoaderManager.LoaderCallbacks;
  */
 public class ForecastFragment extends Fragment
         implements LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener {
-
-    private static final String LOG_TAG = ForecastFragment.class.getSimpleName();
+    /** Log tag for this class. */
+    private static final String TAG = "ForecastFragment";
 
     private static final String KEY_POSITION = "KEY_POSITION";
 
@@ -142,7 +142,7 @@ public class ForecastFragment extends Fragment
                 return true;
 
             default:
-                Log.w(LOG_TAG, "Unknown menu option");
+                Log.w(TAG, "onOptionsItemSelected: Unknown menu option: " + item.getItemId());
                 return super.onOptionsItemSelected(item);
         }
     }
@@ -167,8 +167,8 @@ public class ForecastFragment extends Fragment
                 if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
                     startActivity(intent);
                 } else {
-                    Log.d(LOG_TAG, "Couldn't display map for location (" + lat + ", " + lon
-                            + "), no receiving apps installed!");
+                    Log.d(TAG, "openPreferredLocationInMap: Couldn't display map for location ("
+                            + lat + ", " + lon + "), no receiving apps installed!");
                 }
             }
         }

@@ -45,7 +45,7 @@ import java.util.Vector;
 @Deprecated
 public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
     /** Log tag for this class. */
-    private static final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
+    private static final String TAG = "FetchWeatherTask";
 
     private final Context mContext;
 
@@ -232,11 +232,11 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
                 );
             }
 
-            Log.d(LOG_TAG, "FetchWeatherTask Complete. " + inserted + " Inserted");
+            Log.d(TAG, "getWeatherDataFromJson: FetchWeatherTask complete. " + inserted + " Inserted");
 
         } catch (JSONException e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
-            e.printStackTrace();
+            Log.e(TAG, "getWeatherDataFromJson: ", e);
+            //e.printStackTrace();
         }
     }
 
@@ -314,7 +314,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
             getWeatherDataFromJson(forecastJsonStr, locationQuery);
 
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error ", e);
+            Log.e(TAG, "doInBackground: ", e);
             // If the code didn't successfully get the weather data, there's no point in attempting
             // to parse it.
             return null;
@@ -326,7 +326,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
                 try {
                     reader.close();
                 } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream", e);
+                    Log.e(TAG, "doInBackground: Error closing stream", e);
                 }
             }
         }

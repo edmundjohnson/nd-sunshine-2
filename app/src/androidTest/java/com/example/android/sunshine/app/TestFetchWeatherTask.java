@@ -16,6 +16,7 @@
 package com.example.android.sunshine.app;
 
 import android.annotation.TargetApi;
+import android.content.ContentProviderClient;
 import android.database.Cursor;
 import android.test.AndroidTestCase;
 
@@ -102,8 +103,10 @@ public class TestFetchWeatherTask extends AndroidTestCase {
                 new String[]{ADD_LOCATION_SETTING});
 
         // clean up the test so that other tests can use the content provider
-        getContext().getContentResolver().
-                acquireContentProviderClient(WeatherContract.LocationEntry.CONTENT_URI).
-                getLocalContentProvider().shutdown();
+        ContentProviderClient contentProviderClient = getContext().getContentResolver().
+                acquireContentProviderClient(WeatherContract.LocationEntry.CONTENT_URI);
+        assertNotNull(contentProviderClient);
+        assertNotNull(contentProviderClient.getLocalContentProvider());
+        contentProviderClient.getLocalContentProvider().shutdown();
     }
 }

@@ -436,6 +436,12 @@ public class Utility {
                 case 520:
                     stringId = R.string.condition_520;
                     break;
+                case 521:
+                    stringId = R.string.condition_521;
+                    break;
+                case 522:
+                    stringId = R.string.condition_522;
+                    break;
                 case 531:
                     stringId = R.string.condition_531;
                     break;

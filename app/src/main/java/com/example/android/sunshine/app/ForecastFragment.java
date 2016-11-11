@@ -25,10 +25,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -262,29 +264,34 @@ public class ForecastFragment extends Fragment
                 }
             };
 
+            // Add a scroll listener to the RecyclerView, for parallax scrolling
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 mRecyclerView.addOnScrollListener(mOnScrollListener);
             }
         }
 
-//        // Create a listener for clicking on the list item.
-//        mRecyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView adapterView, View view, int position, long l) {
-//                // CursorAdapter returns a cursor at the correct position for getItem(), or null
-//                // if it cannot seek to that position.
-//                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
-//                if (cursor != null) {
-//                    mSelectedPosition = position;
-//                    String locationSetting = Utility.getPreferredLocation(getActivity());
-//                    long date = cursor.getLong(COL_WEATHER_DATE);
-//                    Uri dateUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
-//                                                    locationSetting, date);
-//                    ((Callback) getActivity()).onItemSelected(dateUri);
-//                    // Note: the cursor cannot be closed here - that causes a crash
-//                }
-//            }
-//        });
+        // Add another scroll listener to the RecyclerView, for dynamically
+        // changing the elevation
+        final AppBarLayout appbarView = (AppBarLayout)rootView.findViewById(R.id.appbar);
+        if (null != appbarView) {
+            ViewCompat.setElevation(appbarView, 0f);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+                    @Override
+                    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                        if (0 == mRecyclerView.computeVerticalScrollOffset()) {
+                            appbarView.setElevation(0f);
+                        } else {
+                            // NOTE: The deprecated method getTargetElevation() always returns 0.
+                            //appbarView.setElevation(appbarView.getTargetElevation());
+                            appbarView.setElevation(
+                                    getResources().getDimension(R.dimen.appbar_elevation));
+                        }
+                    }
+                });
+            }
+        }
 
         // If there's instance state, mine it for useful information.
         // The end-goal here is that the user never knows that turning their device sideways

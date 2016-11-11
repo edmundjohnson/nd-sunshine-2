@@ -39,6 +39,7 @@ dependencies {
     compile "com.android.support:gridlayout-v7:$SUPPORT_LIB_VERSION"
     compile "com.android.support:cardview-v7:$SUPPORT_LIB_VERSION"
     compile "com.android.support:recyclerview-v7:$SUPPORT_LIB_VERSION"
+    compile "com.android.support:design:$SUPPORT_LIB_VERSION"
 
     // required for GCM
     compile "com.google.android.gms:play-services-gcm:$GOOGLE_PLAY_SERVICES_VERSION"

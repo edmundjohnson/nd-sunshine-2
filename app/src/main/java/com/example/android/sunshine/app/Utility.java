@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class Utility {
+    private static final float DEFAULT_LAT_LONG = 0f;
 
     /**
      * Format used for storing dates in the database.  Also used for converting those strings
@@ -86,8 +87,12 @@ public class Utility {
      * Resets the user's location status to Unknown.
      * @param context the current context
      */
-    public static void resetLocationStatus(Context context, boolean foreground) {
-        setLocationStatus(context, SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN, foreground);
+    public static void resetLocationStatus(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor spe = prefs.edit();
+        spe.putInt(context.getString(R.string.pref_location_status_key),
+                SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
+        spe.apply();
     }
 
     /**
@@ -102,11 +107,44 @@ public class Utility {
         return location.isEmpty() ? context.getString(R.string.pref_location_default) : location;
     }
 
+
     public static boolean isMetric(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(context.getString(R.string.pref_units_key),
                 context.getString(R.string.pref_units_metric)).
                     equals(context.getString(R.string.pref_units_metric));
+    }
+
+
+    /**
+     * Returns whether the user has used the place picker to select a location.
+     * @param context the context
+     * @return true if the user has used the place picker to select a location, false otherwise
+     */
+    public static boolean isLocationLatLongAvailable(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.contains(context.getString(R.string.pref_location_latitude_key))
+                && prefs.contains(context.getString(R.string.pref_location_longitude_key));
+    }
+
+    /**
+     * Returns the value of the location latitude preference.
+     * @param context the context
+     * @return the value of the location latitude preference
+     */
+    public static float getLocationLatitude(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getFloat(context.getString(R.string.pref_location_latitude_key), DEFAULT_LAT_LONG);
+    }
+
+    /**
+     * Returns the value of the location longitude preference.
+     * @param context the context
+     * @return the value of the location longitude preference
+     */
+    public static float getLocationLongitude(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getFloat(context.getString(R.string.pref_location_longitude_key), DEFAULT_LAT_LONG);
     }
 
     @NonNull
@@ -189,7 +227,7 @@ public class Utility {
             return context.getString(
                     formatId,
                     today,
-                    getFormattedMonthDay(context, dateInMillis));
+                    getFormattedMonthDay(dateInMillis));
         } else if ( julianDay < currentJulianDay + 7 ) {
             // If the input date is less than a week in the future, just return the day name.
             return getDayName(context, dateInMillis);
@@ -219,7 +257,7 @@ public class Utility {
         return context.getString(
                 formatId,
                 day,
-                getFormattedMonthDay(context, dateInMillis));
+                getFormattedMonthDay(dateInMillis));
     }
 
     /**
@@ -253,12 +291,11 @@ public class Utility {
 
     /**
      * Converts db date format to the format "Month day", e.g "June 24".
-     * @param context Context to use for resource localization
      * @param dateInMillis The db formatted date string, expected to be of the form specified
      *                in Utility.DATE_FORMAT
      * @return The day in the form of a string formatted "December 6"
      */
-    private static String getFormattedMonthDay(Context context, long dateInMillis ) {
+    private static String getFormattedMonthDay(long dateInMillis ) {
         Time time = new Time();
         time.setToNow();
         //SimpleDateFormat dbDateFormat = new SimpleDateFormat(Utility.DATE_FORMAT, Locale.getDefault());

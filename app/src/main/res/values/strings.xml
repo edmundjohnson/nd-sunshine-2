@@ -94,6 +94,11 @@
     <string name="pref_location_status_unknown_location">Validating location&#8230; (<xliff:g id="location_setting">%1$s</xliff:g>)</string>
     <string name="pref_location_status_unable_to_validate_location">Unable to validate location&#8230; (<xliff:g id="location_setting">%1$s</xliff:g>)</string>
 
+    <!-- Key name for storing location latitude in SharedPreferences [CHAR LIMIT=NONE] -->
+    <string name="pref_location_latitude_key" translatable="false">loc-latitude</string>
+    <!-- Key name for storing location longitude in SharedPreferences [CHAR LIMIT=NONE] -->
+    <string name="pref_location_longitude_key" translatable="false">loc-longitude</string>
+
     <!-- Key name for temperature unit preference in SharedPreferences [CHAR LIMIT=NONE] -->
     <string name="pref_units_key" translatable="false">units</string>
     <!-- Value in SharedPreferences for metric temperature unit option [CHAR LIMIT=NONE] -->
@@ -124,6 +129,7 @@
     <string name="pref_location_status_key" translatable="false">location_status</string>
     <!-- Default location status [CHAR LIMIT=NONE] -->
     <!-- <string name="pref_location_status_default" translatable="false">3</string> -->
+    <string name="pref_current_location_desc">Use my current location</string>
 
     <!-- Data and SyncAdapter related -->
     <string name="content_authority">com.example.android.sunshine.app</string>

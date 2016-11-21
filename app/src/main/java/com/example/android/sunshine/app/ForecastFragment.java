@@ -82,12 +82,12 @@ public class ForecastFragment extends Fragment
 
     // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
     // must change.
-    public static final int COL_WEATHER_ID = 0;
+//    public static final int COL_WEATHER_ID = 0;
     public static final int COL_WEATHER_DATE = 1;
-    public static final int COL_WEATHER_DESC = 2;
+//    public static final int COL_WEATHER_DESC = 2;
     public static final int COL_WEATHER_MAX_TEMP = 3;
     public static final int COL_WEATHER_MIN_TEMP = 4;
-    public static final int COL_LOCATION_SETTING = 5;
+//    public static final int COL_LOCATION_SETTING = 5;
     public static final int COL_WEATHER_CONDITION_ID = 6;
     private static final int COL_COORD_LAT = 7;
     private static final int COL_COORD_LONG = 8;
@@ -154,7 +154,7 @@ public class ForecastFragment extends Fragment
 
         if (null != mForecastAdapter) {
             Cursor c = mForecastAdapter.getCursor();
-            if (c != null) {
+            if (c != null && c.moveToFirst()) {
                 String lat = c.getString(COL_COORD_LAT);
                 String lon = c.getString(COL_COORD_LONG);
 

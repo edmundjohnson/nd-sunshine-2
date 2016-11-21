@@ -27,10 +27,12 @@ android {
 }
 
 dependencies {
-    ext.SUPPORT_LIB_VERSION = '25.0.0'
+    ext.SUPPORT_LIB_VERSION = '25.0.1'
     // Don't necessarily use the latest version of play services -
     // play-services-gcm:9.4.0 is compatible with com.google.gms:google-services:3.0.0
-    ext.GOOGLE_PLAY_SERVICES_VERSION = '9.4.0'
+    //ext.GOOGLE_PLAY_SERVICES_VERSION = '9.4.0'
+    // PlacePicker is in play-services-location:9.0.0 but not 9.4.0
+    ext.GOOGLE_PLAY_SERVICES_VERSION = '9.0.0'
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.github.bumptech.glide:glide:3.7.0'
@@ -40,9 +42,10 @@ dependencies {
     compile "com.android.support:cardview-v7:$SUPPORT_LIB_VERSION"
     compile "com.android.support:recyclerview-v7:$SUPPORT_LIB_VERSION"
     compile "com.android.support:design:$SUPPORT_LIB_VERSION"
-
     // required for GCM
     compile "com.google.android.gms:play-services-gcm:$GOOGLE_PLAY_SERVICES_VERSION"
+    // required for Places API
+    compile "com.google.android.gms:play-services-location:$GOOGLE_PLAY_SERVICES_VERSION"
 }
 
 // required for GCM - needs to be at end of file

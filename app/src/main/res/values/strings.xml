@@ -211,4 +211,7 @@
     <!-- Transitions -->
     <string name="detail_icon_transition_name" translatable="false">detailIconTransition</string>
 
+    <!-- For Google Places API Attributions -->
+    <string name="attribution_text">Powered by Google</string>
+
 </resources>

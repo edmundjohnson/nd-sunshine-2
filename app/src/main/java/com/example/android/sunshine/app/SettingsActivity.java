@@ -28,8 +28,11 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.example.android.sunshine.app.customview.LocationEditTextPreference;
 import com.example.android.sunshine.app.data.WeatherContract;
@@ -53,6 +56,8 @@ public class SettingsActivity extends PreferenceActivity
     /** Log tag for this class. */
     private static final String TAG = "SettingsActivity";
 
+    private ImageView mAttribution;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +74,16 @@ public class SettingsActivity extends PreferenceActivity
         LocationEditTextPreference locationEditTextPreference = (LocationEditTextPreference)
                 findPreference(getString(R.string.pref_location_key));
         Log.d(TAG, "onCreate: Min length = " + locationEditTextPreference.getMinLength());
+
+        // If we are using a PlacePicker location, we need to show attributions.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            mAttribution = new ImageView(this);
+            mAttribution.setImageResource(R.drawable.powered_by_google_light);
+            if (!Utility.isLocationLatLongAvailable(this)) {
+                mAttribution.setVisibility(View.GONE);
+            }
+            setListFooter(mAttribution);
+        }
     }
 
     @Override
@@ -151,6 +166,11 @@ public class SettingsActivity extends PreferenceActivity
             editor.remove(getString(R.string.pref_location_longitude_key));
             editor.commit();
 
+            // Remove attributions for any PlacePicker locations.
+            if (mAttribution != null) {
+                mAttribution.setVisibility(View.GONE);
+            }
+
             Utility.resetLocationStatus(this);
             SunshineSyncAdapter.syncImmediately(this);
 
@@ -199,12 +219,23 @@ public class SettingsActivity extends PreferenceActivity
                 // ensure that the changes are written before the SyncAdapter is invoked
                 editor.commit();
 
+                Preference locationPreference = findPreference(getString(R.string.pref_location_key));
+                setPreferenceSummary(locationPreference, address);
+
+                // Add attributions for our new PlacePicker location.
+                if (mAttribution != null) {
+                    mAttribution.setVisibility(View.VISIBLE);
+                } else {
+                    // For pre-Honeycomb devices, we cannot add a footer, so we will use a snackbar
+                    View rootView = findViewById(android.R.id.content);
+                    Snackbar.make(rootView, getString(R.string.attribution_text),
+                            Snackbar.LENGTH_LONG).show();
+                }
+
                 // Tell the SyncAdapter that we've changed the location, so that we can update
                 // our UI with new values.  We need to do this manually because we are responding
                 // to the PlacePicker widget result here, rather than allowing the
                 // LocationEditTextPreference to handle these changes and invoke our callbacks.
-                Preference locationPreference = findPreference(getString(R.string.pref_location_key));
-                setPreferenceSummary(locationPreference, address);
                 Utility.resetLocationStatus(this);
                 SunshineSyncAdapter.syncImmediately(this);
             }

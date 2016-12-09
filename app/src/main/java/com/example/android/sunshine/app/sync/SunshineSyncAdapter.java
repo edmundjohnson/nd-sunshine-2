@@ -55,6 +55,10 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     /** Log tag for this class. */
     private static final String TAG = "SunshineSyncAdapter";
 
+    /** Name of intent for broadcasting to widget, matches name in AndroidManifest.xml. */
+    public static final String ACTION_DATA_UPDATED =
+            "com.example.android.sunshine.app.ACTION_DATA_UPDATED";
+
     // Interval at which to sync with the weather, in seconds.
     // 60 seconds (1 minute) * 180 = 3 hours
     private static final int SYNC_INTERVAL = 60 * 180;
@@ -190,7 +194,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             forecastJsonStr = buffer.toString();
             getWeatherDataFromJson(forecastJsonStr, locationQuery);
 
-            // the next line should possibly be in getWeatherDataFromJson, after the call to bulkInsert
+            // the next lines should possibly be in getWeatherDataFromJson, after the call to bulkInsert
+            updateWidgets();
             notifyWeather();
 
         } catch (IOException e) {
@@ -492,6 +497,18 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
     public static void initializeSyncAdapter(Context context) {
         getSyncAccount(context);
+    }
+
+    /**
+     * Notify any listening receivers (e.g. the widget provider) that the data has changed.
+     * "notifyWidgetProvider" would be a better name.
+     */
+    private void updateWidgets() {
+        Context context = getContext();
+        // Setting the package ensures that only components in our app will receive the broadcast
+        Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED)
+                .setPackage(context.getPackageName());
+        context.sendBroadcast(dataUpdatedIntent);
     }
 
     /**

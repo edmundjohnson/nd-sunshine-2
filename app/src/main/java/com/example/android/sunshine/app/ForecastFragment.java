@@ -95,9 +95,10 @@ public class ForecastFragment extends Fragment
     private ForecastAdapter mForecastAdapter;
 
     private RecyclerView mRecyclerView;
-    private int mSelectedPosition = RecyclerView.NO_POSITION;
+    //private int mSelectedPosition = RecyclerView.NO_POSITION;
     private boolean mUseTodayLayout;
     private boolean mHoldForTransition;
+    private long mInitialSelectedDate = -1;
 
     public ForecastFragment() {
     }
@@ -212,7 +213,7 @@ public class ForecastFragment extends Fragment
                         WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, date);
                 ((Callback) getActivity()).onItemSelected(dateUri, viewHolder);
                 // Note: the cursor cannot be closed here - that causes a crash
-                mSelectedPosition = viewHolder.getAdapterPosition();
+                //mSelectedPosition = viewHolder.getAdapterPosition();
             }
         };
 
@@ -298,11 +299,11 @@ public class ForecastFragment extends Fragment
         // does crazy lifecycle related things.  It should feel like some stuff stretched out,
         // or magically appeared to take advantage of room, but data or place in the app was never
         // actually *lost*.
-        if (savedInstanceState != null && savedInstanceState.containsKey(KEY_POSITION)) {
-            // The RecyclerView probably hasn't even been populated yet.
-            // Actually perform the swap out in onLoadFinished.
-            mSelectedPosition = savedInstanceState.getInt(KEY_POSITION);
-        }
+        //if (savedInstanceState != null && savedInstanceState.containsKey(KEY_POSITION)) {
+        //    // The RecyclerView probably hasn't even been populated yet.
+        //    // Actually perform the swap out in onLoadFinished.
+        //    mSelectedPosition = savedInstanceState.getInt(KEY_POSITION);
+        //}
 
         return rootView;
     }
@@ -312,9 +313,9 @@ public class ForecastFragment extends Fragment
         // When device rotates, the currently selected list item needs to be saved.
         // When no item is selected, mSelectedPosition will be set to RecyclerView.NO_POSITION,
         // so check for that before storing.
-        if (mSelectedPosition != RecyclerView.NO_POSITION) {
-            outState.putInt(KEY_POSITION, mSelectedPosition);
-        }
+        //if (mSelectedPosition != RecyclerView.NO_POSITION) {
+        //    outState.putInt(KEY_POSITION, mSelectedPosition);
+        //}
         super.onSaveInstanceState(outState);
     }
 
@@ -442,10 +443,10 @@ public class ForecastFragment extends Fragment
 
         // If we don't need to restart the loader, and there's a desired position
         // to restore to, do so now.
-        if (mSelectedPosition != RecyclerView.NO_POSITION) {
-            mRecyclerView.smoothScrollToPosition(mSelectedPosition);
-            //((LinearLayout) mRecyclerView.getItemAtPosition(mSelectedPosition)).setActivated(true);
-        }
+        //if (mSelectedPosition != RecyclerView.NO_POSITION) {
+        //    mRecyclerView.smoothScrollToPosition(mSelectedPosition);
+        //    //((LinearLayout) mRecyclerView.getItemAtPosition(mSelectedPosition)).setActivated(true);
+        //}
         updateEmptyView();
 
         if (cursor.getCount() == 0) {
@@ -533,6 +534,10 @@ public class ForecastFragment extends Fragment
         if (mForecastAdapter != null) {
             mForecastAdapter.setUseTodayLayout(useTodayLayout);
         }
+    }
+
+    public void setInitialSelectedDate(long initialSelectedDate) {
+        mInitialSelectedDate = initialSelectedDate;
     }
 
     /**

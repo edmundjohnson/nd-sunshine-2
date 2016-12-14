@@ -2,6 +2,7 @@ package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
@@ -218,6 +219,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
     @Override
     public void onBindViewHolder(ForecastAdapterViewHolder viewHolder, int position) {
         Context context = mContext;
+        boolean useLongToday;
 
         mCursor.moveToPosition(position);
 
@@ -229,10 +231,12 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         switch (viewType) {
             case VIEW_TYPE_TODAY:
                 defaultImage = Utility.getArtResourceForWeatherCondition(weatherId);
+                useLongToday = true;
                 break;
             case VIEW_TYPE_FUTURE_DAY:
             default:
                 defaultImage = Utility.getIconResourceForWeatherCondition(weatherId);
+                useLongToday = false;
                 break;
         }
 
@@ -250,7 +254,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
         // Date
         long dateInMillis = mCursor.getLong(COL_WEATHER_DATE);
-        viewHolder.mDateView.setText(Utility.getFriendlyDayString(context, dateInMillis));
+        viewHolder.mDateView.setText(Utility.getFriendlyDayString(context, dateInMillis, useLongToday));
 
         // Description
         // Use the weather id to get the description, so it can be internationalised

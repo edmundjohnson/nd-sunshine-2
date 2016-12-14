@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "com.example.android.sunshine.app"
@@ -29,7 +29,7 @@ android {
 }
 
 dependencies {
-    ext.SUPPORT_LIB_VERSION = '25.0.1'
+    ext.SUPPORT_LIB_VERSION = '25.1.0'
     // Don't necessarily use the latest version of play services -
     // play-services-gcm:9.4.0 is compatible with com.google.gms:google-services:3.0.0
     //ext.GOOGLE_PLAY_SERVICES_VERSION = '9.4.0'

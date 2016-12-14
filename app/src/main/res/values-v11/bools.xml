@@ -1,0 +1,3 @@
+<resources>
+    <bool name="widget_detail_enabled">true</bool>
+</resources>

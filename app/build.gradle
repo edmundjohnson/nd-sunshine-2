@@ -29,12 +29,17 @@ android {
 }
 
 dependencies {
+    // Don't necessarily use the latest version of Support Lib - everything is shot to pieces.
+    // If the app is uninstalled, may need to build and run with 23.4.0 to get token,
+    // then rebuild and run with a later version
+    //ext.SUPPORT_LIB_VERSION = '23.4.0'
     ext.SUPPORT_LIB_VERSION = '25.1.0'
     // Don't necessarily use the latest version of play services -
     // play-services-gcm:9.4.0 is compatible with com.google.gms:google-services:3.0.0
     //ext.GOOGLE_PLAY_SERVICES_VERSION = '9.4.0'
     // PlacePicker is in play-services-location:9.0.0 but not 9.4.0
     ext.GOOGLE_PLAY_SERVICES_VERSION = '9.0.0'
+    //ext.GOOGLE_PLAY_SERVICES_VERSION = '10.0.1'
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.github.bumptech.glide:glide:3.7.0'
@@ -48,6 +53,8 @@ dependencies {
     compile "com.google.android.gms:play-services-gcm:$GOOGLE_PLAY_SERVICES_VERSION"
     // required for Places API
     compile "com.google.android.gms:play-services-location:$GOOGLE_PLAY_SERVICES_VERSION"
+    // required for setting wallpaper
+    compile 'com.google.android.apps.muzei:muzei-api:2.0'
 
     androidTestCompile 'com.android.support.test:rules:0.5'
     androidTestCompile 'com.android.support.test:runner:0.5'
